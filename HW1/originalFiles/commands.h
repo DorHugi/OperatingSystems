@@ -8,6 +8,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <iostream>
+#include <string>
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
@@ -20,7 +22,45 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString);
 //My functions:
 
 void pwd_cmd();
-viud history_cmd();
+void history_cmd();
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
