@@ -8,11 +8,14 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <list>
 #include <iostream>
 #include <string>
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
+#define MAX_HISTORY 50
+
 int ExeComp(char* lineSize);
 int BgCmd(char* lineSize, void* jobs);
 int ExeCmd(void* jobs, char* lineSize, char* cmdString);

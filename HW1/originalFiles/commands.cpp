@@ -4,6 +4,9 @@
 
 using namespace std;
 
+//Global variables:
+
+list<string> historyList; 
 
 
 //********************************************
