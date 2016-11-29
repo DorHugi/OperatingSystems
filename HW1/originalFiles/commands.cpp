@@ -63,6 +63,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "pwd")) 
 	{
+        printf("I've got to PWD\n");
        pwd_cmd(); 		
         
 	}
