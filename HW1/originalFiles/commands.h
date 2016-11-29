@@ -20,5 +20,10 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString);
 //Caller is obligated to free this memory.
 
 void pwd_cmd();
+void showpid_cmd();
+void update_jobs();
+void jobs_cmd();
+void history_cmd();
+BOOL cd_cmd(const char* path);
 #endif
 
