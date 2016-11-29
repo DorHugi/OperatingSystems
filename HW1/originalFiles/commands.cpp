@@ -1,6 +1,11 @@
-//		commands.c
+//		commands.cpp
 //********************************************
 #include "commands.h"
+
+using namespace std;
+
+
+
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
@@ -40,6 +45,13 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	else if (!strcmp(cmd, "pwd")) 
 	{
        pwd_cmd(); 		
+        
+	}
+	
+	/*************************************************/
+	else if (!strcmp(cmd, "history")) 
+	{
+       history_cmd(); 		
         
 	}
 	
@@ -186,7 +198,13 @@ void pwd_cmd(){
 }
 
 
+void history_cmd(){
 
+    string myStr ="Hello";
+    
+    cout << "myStr:" << myStr << endl;
+
+}
 
 
 

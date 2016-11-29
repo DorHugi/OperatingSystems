@@ -16,9 +16,11 @@ int BgCmd(char* lineSize, void* jobs);
 int ExeCmd(void* jobs, char* lineSize, char* cmdString);
 void ExeExternal(char *args[MAX_ARG], char* cmdString);
 
-//getPwd(): Fucntion retruns a char* of the current working directory. 
-//Caller is obligated to free this memory.
+
+//My functions:
 
 void pwd_cmd();
+viud history_cmd();
+
 #endif
 
