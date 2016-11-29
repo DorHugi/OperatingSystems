@@ -182,7 +182,7 @@ void pwd_cmd(){
         exit(-1);
     }
     //else
-    printf("%s",cwdBuf);
+    printf("%s\n",cwdBuf);
 }
 
 
