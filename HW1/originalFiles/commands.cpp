@@ -1,7 +1,7 @@
 //		commands.c
 //********************************************
 #include "commands.h"
-#include <iostream>
+//#include <iostream>
 #include <list>
 //********************************************
 // function name: ExeCmd
@@ -15,13 +15,13 @@ static char* cmd_history[MAX_CMD_HISTORY];
 static int num_cmd_history;
 static char* prev_dir;
 
-typdef struct job{
+typedef struct {
 	int pid;
 	char* name;
 	int start_time;
-}
+} job ;
 
-std::list<job> jobs;
+//std::list<job> jobs;
 
 int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 {
@@ -57,7 +57,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-	  illegal_cmd = cd_cmd(cmd); 	
+	  //illegal_cmd = cd_cmd(cmd); 	
 	} 
 	
 	/*************************************************/
@@ -70,7 +70,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
     else if (!strcmp(cmd, "history"))
     {
-    	history_cmd();
+        //history_cmd();
     }
 	/*************************************************/
 	else if (!strcmp(cmd, "mkdir"))
@@ -82,13 +82,13 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	else if (!strcmp(cmd, "jobs")) 
 	{
  		
- 		jobs_cmd();
+         //jobs_cmd();
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
 	{
 		
-		showpid_cmd();
+		//showpid_cmd();
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
@@ -217,81 +217,81 @@ void pwd_cmd(){
 }
 
 
-BOOL cd_cmd(const char* path)
-{
-	char buf[MAX_BUF];
-	size_t size=MAX_BUF;
-	char* tmp_dir=getCwd(buf,size);
-	if(!strcmp(path,'-'))
-	{
-		chdir(strcat('~/',prev_dir));
-		prev_dir=tmp_dir;
-		update_history("cd %s",path);
-		return TRUE;
-	}
-	else
-	{
-		if(chdir(path))
-		{
-			prev_dir=tmp_dir;
-			update_history("cd %s",path);
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
-}
+//BOOL cd_cmd(const char* path)
+//{
+	//char buf[MAX_BUF];
+	//size_t size=MAX_BUF;
+	//char* tmp_dir=getCwd(buf,size);
+	//if(!strcmp(path,'-'))
+	//{
+		//chdir(strcat('~/',prev_dir));
+		//prev_dir=tmp_dir;
+		//update_history("cd %s",path);
+		//return TRUE;
+	//}
+	//else
+	//{
+		//if(chdir(path))
+		//{
+			//prev_dir=tmp_dir;
+			//update_history("cd %s",path);
+			//return TRUE;
+		//}
+		//else
+		//{
+			//return FALSE;
+		//}
+	//}
+//}
 
-void history_cmd()
-{
-	int num_cmd_tmp = num_cmd_history;
-	int i=0;
-	while (num_cmd_tmp>0)
-	{
-		printf("%s\n",cmd_history[i]);
-		i++;
-		num_cmd--;
+//void history_cmd()
+//{
+	//int num_cmd_tmp = num_cmd_history;
+	//int i=0;
+	//while (num_cmd_tmp>0)
+	//{
+		//printf("%s\n",cmd_history[i]);
+		//i++;
+		//num_cmd--;
 
-	}
-}
+	//}
+//}
 
 
-void jobs_cmd()
-{
-	update_jobs();
-	int i = 1;
-	int time;
-	for(std::list<job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
-	{
-		dur = time(NULL)-it->start_time;
-		printf("[%d] %s : %d %d secs",i,it->name,it->pid,dur);
-				i++;
-	}
-}
+//void jobs_cmd()
+//{
+	//update_jobs();
+	//int i = 1;
+	//int time;
+	//for(std::list<job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
+	//{
+		//dur = time(NULL)-it->start_time;
+		//printf("[%d] %s : %d %d secs",i,it->name,it->pid,dur);
+				//i++;
+	//}
+//}
 
-void update_jobs()
-{
-	std::list<job>::iterator it=jobs.begin();
-	while(it!=jobs.end())
-	{
-		if(waitpid(it->pid,NULL,WNOHANG))
-		{
-			it.erase();
-			continue;
-		}
-		else
-		{
-			++it;
-		}
-	}
-}
+//void update_jobs()
+//{
+	//std::list<job>::iterator it=jobs.begin();
+	//while(it!=jobs.end())
+	//{
+		//if(waitpid(it->pid,NULL,WNOHANG))
+		//{
+			//it.erase();
+			//continue;
+		//}
+		//else
+		//{
+			//++it;
+		//}
+	//}
+//}
 
-void showpid_cmd()
-{
-	printf("smash pid is $d",getpid());
-}
+//void showpid_cmd()
+//{
+	//printf("smash pid is $d",getpid());
+//}
 
 
 

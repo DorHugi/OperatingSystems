@@ -11,19 +11,24 @@
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
+#define MAX_CMD_HISTORY 50
 int ExeComp(char* lineSize);
 int BgCmd(char* lineSize, void* jobs);
 int ExeCmd(void* jobs, char* lineSize, char* cmdString);
 void ExeExternal(char *args[MAX_ARG], char* cmdString);
 
-//getPwd(): Fucntion retruns a char* of the current working directory. 
-//Caller is obligated to free this memory.
 
+
+//My functions: 
 void pwd_cmd();
-void showpid_cmd();
-void update_jobs();
-void jobs_cmd();
-void history_cmd();
-BOOL cd_cmd(const char* path);
+
+
+//Orbach's functions: 
+//void showpid_cmd();
+//void update_jobs();
+//void jobs_cmd();
+//void history_cmd();
+//BOOL cd_cmd(const char* path);
+
 #endif
 
