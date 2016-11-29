@@ -14,7 +14,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char pwd[MAX_LINE_SIZE];
 	char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
-	bool illegal_cmd = FALSE; // illegal command
+	bool illegal_cmd = false; // illegal command
     	cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
 		return 0; 
@@ -39,7 +39,8 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "pwd")) 
 	{
-		
+       pwd_cmd(); 		
+        
 	}
 	
 	/*************************************************/
@@ -79,7 +80,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
  		ExeExternal(args, cmdString);
 	 	return 0;
 	}
-	if (illegal_cmd == TRUE)
+	if (illegal_cmd == true)
 	{
 		printf("smash error: > \"%s\"\n", cmdString);
 		return 1;
@@ -103,6 +104,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 					/* 
 					your code
 					*/
+                break;
         	case 0 :
                 	// Child Process
                		setpgrp();
@@ -112,10 +114,10 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 					/* 
 					your code
 					*/
-			
+		        break;	
 			default:
                 	// Add your code here
-					
+				printf("Hello!\n");	
 					/* 
 					your code
 					*/
@@ -165,4 +167,37 @@ int BgCmd(char* lineSize, void* jobs)
 	}
 	return -1;
 }
+
+
+
+    
+
+void pwd_cmd(){
+    char cwdBuf[MAX_BUF] = {0};
+
+    //put current working directory in myBuf.  
+    if (!getcwd(cwdBuf,MAX_BUF)) //if Null is returned:
+    {
+        perror("Error in pwd_cmd\n");
+        exit(-1);
+    }
+    //else
+    printf("%s",cwdBuf);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
