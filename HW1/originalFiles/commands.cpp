@@ -57,7 +57,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-	    cd_cmd(cmd); 	
+	  illegal_cmd = cd_cmd(cmd); 	
 	} 
 	
 	/*************************************************/
