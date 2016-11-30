@@ -8,6 +8,10 @@ using namespace std;
 
 list<string> historyList; 
 
+//Local functions declarations:
+
+void updateHistoryList(char* cmdString); 
+
 
 //********************************************
 // function name: ExeCmd
@@ -205,11 +209,20 @@ void history_cmd(){
 
     string myStr ="Hello";
     
-    cout << "myStr:" << myStr << endl;
-
+    for (list<string>::const_iterator it = historyList.begin() ; it != historyList.end() ; it++)
+        cout << *it << endl;
 }
 
 
+void updateHistoryList(char* cmdString){
+
+    if (historyList.size() >= MAX_HISTORY){
+        historyList.pop_front(); //remove first element
+    }
+    
+    string tmpCmdStr(cmdString); //create a new string from cmdString
+    historyList.push_back(tmpCmdStr);
+}
 
 
 
