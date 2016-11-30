@@ -1,8 +1,7 @@
 //		commands.c
 //********************************************
 #include "commands.h"
-#include <iostream>
-#include <list>
+
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
@@ -15,13 +14,13 @@ static char* cmd_history[MAX_CMD_HISTORY];
 static int num_cmd_history;
 static char* prev_dir;
 
-typdef struct job{
+typedef struct Job{
 	int pid;
 	char* name;
 	int start_time;
-}
+} Job;
 
-std::list<job> jobs;
+std::list<Job> jobs;
 
 int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 {
@@ -57,7 +56,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-	  illegal_cmd = cd_cmd(cmd); 	
+	  illegal_cmd = cd_cmd(args[1]);
 	} 
 	
 	/*************************************************/
@@ -217,29 +216,27 @@ void pwd_cmd(){
 }
 
 
-BOOL cd_cmd(const char* path)
+bool cd_cmd(const char* path)
 {
 	char buf[MAX_BUF];
 	size_t size=MAX_BUF;
-	char* tmp_dir=getCwd(buf,size);
-	if(!strcmp(path,'-'))
+	char* tmp_dir=getcwd(buf,size);
+	if(!strcmp(path,"-"))
 	{
-		chdir(strcat('~/',prev_dir));
+		chdir(strcat("~/",prev_dir));
 		prev_dir=tmp_dir;
-		update_history("cd %s",path);
-		return TRUE;
+		return true;
 	}
 	else
 	{
 		if(chdir(path))
 		{
 			prev_dir=tmp_dir;
-			update_history("cd %s",path);
-			return TRUE;
+			return true;
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
 }
@@ -252,7 +249,7 @@ void history_cmd()
 	{
 		printf("%s\n",cmd_history[i]);
 		i++;
-		num_cmd--;
+		num_cmd_tmp--;
 
 	}
 }
@@ -263,9 +260,9 @@ void jobs_cmd()
 	update_jobs();
 	int i = 1;
 	int time;
-	for(std::list<job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
+	for(std::list<Job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
 	{
-		dur = time(NULL)-it->start_time;
+		int dur = time(NULL)-it->start_time;
 		printf("[%d] %s : %d %d secs",i,it->name,it->pid,dur);
 				i++;
 	}
@@ -273,12 +270,12 @@ void jobs_cmd()
 
 void update_jobs()
 {
-	std::list<job>::iterator it=jobs.begin();
+	std::list<Job>::iterator it=jobs.begin();
 	while(it!=jobs.end())
 	{
 		if(waitpid(it->pid,NULL,WNOHANG))
 		{
-			it.erase();
+			it.erase (it);
 			continue;
 		}
 		else
