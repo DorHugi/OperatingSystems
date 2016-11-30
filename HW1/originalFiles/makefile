@@ -1,6 +1,6 @@
 # Makefile for the smash program
 CC = g++
-CFLAGS = -g -Wall
+CFLAGS = -g -gstabs -Wall
 CCLINK = $(CC)
 OBJS = smash.o commands.o signals.o
 RM = rm -f
