@@ -31,6 +31,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	if (cmd == NULL)
 		return 0; 
    	args[0] = cmd;
+    updateHistoryList(cmdString);
 	for (i=1; i<MAX_ARG; i++)
 	{
 		args[i] = strtok(NULL, delimiters); 
