@@ -7,11 +7,13 @@ using namespace std;
 //Global variables:
 
 list<string> historyList; 
-
+list<jobs> jobsList;
+char* delimiters = " \t\n";  
+char* SHELL = "/bin/sh";
 //Local functions declarations:
 
 void updateHistoryList(char* cmdString); 
-
+void updateJobsList(string name, pid_t pid);
 
 //********************************************
 // function name: ExeCmd
@@ -24,7 +26,6 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char* cmd; 
 	char* args[MAX_ARG];
 	char pwd[MAX_LINE_SIZE];
-	char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
     	cmd = strtok(lineSize, delimiters);
@@ -72,7 +73,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	
 	else if (!strcmp(cmd, "jobs")) 
 	{
- 		
+        void jobs_cmd(); 		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
@@ -155,11 +156,26 @@ int ExeComp(char* lineSize)
 	char *args[MAX_ARG];
     if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
     {
-		// Add your code here (execute a complicated command)
-					
-		/* 
-		your code
-		*/
+        bool bg = false;
+        //check if this is also a bg command.
+        if (lineSize[strlen(lineSize)-2] == '&')
+            bg = true;
+        //run the command
+        pid_t currentPid;     
+        
+        fork();
+        currentPid = getpid(); //check if you're the father or the son
+        if (currentPid){ //if you're the son.
+            execl(SHELL,SHELL,lineSize);
+        } 
+        //if it's the father:
+
+        if (bg){ //add to jobs list
+            string nameString(lineSize); //change the command name from char * to string
+            updateJobsList(nameString,currentPid);
+        }            
+        return(1);
+
 	} 
 	return -1;
 }
@@ -208,7 +224,6 @@ void pwd_cmd(){
 
 void history_cmd(){
 
-    string myStr ="Hello";
     
     for (list<string>::const_iterator it = historyList.begin() ; it != historyList.end() ; it++)
         cout << *it << endl;
@@ -230,6 +245,31 @@ void updateHistoryList(char* cmdString){
 void showpid_cmd(){
     //pid_t id = getpid();
    cout << "smash pid is " << getpid() << endl; 
+}
+
+//Shows all jobs.
+void jobs_cmd(){
+    int i = 0; 
+    int curTime = int(time(NULL));
+    for (list<jobs>::const_iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
+        //print all jobs
+        int timePassed = curTime - it->startTime;
+        cout << it->name << " : " << it->pid << " " << timePassed << " secs " << it->isSuspended<<endl;
+
+
+    }
+
+}
+
+
+void updateJobsList(string name, pid_t pid){
+    if (jobsList.size() >= MAX_JOBS){
+        cerr << "There are more than " << MAX_JOBS << "job isn't added to jobs List" << endl;
+        return;
+        }
+    jobs newJob(name, pid);
+    jobsList.push_back(newJob);
+
 }
 
 

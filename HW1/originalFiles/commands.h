@@ -15,6 +15,9 @@
 #define MAX_ARG 20
 #define MAX_BUF 1024
 #define MAX_HISTORY 50
+#define MAX_JOB_NAME 50
+#define MAX_JOBS 100
+using namespace std;
 
 int ExeComp(char* lineSize);
 int BgCmd(char* lineSize, void* jobs);
@@ -26,7 +29,25 @@ void showpid_cmd();
 
 void pwd_cmd();
 void history_cmd();
+void jobs_cmd(); 		
 
+
+//Classes:
+
+class jobs {
+    public:
+        //Class variables.
+        string name;
+        int startTime;
+        pid_t pid; 
+        string isSuspended;//This string is set to "(Stopped)" if the process is suspended.
+                           //and empty string otherwise (default).
+        //functions:
+        jobs(string _name, pid_t _pid):name(_name),pid(_pid),isSuspended(""){
+            startTime = int(time(NULL));   
+
+        }
+};
 #endif
 
 
