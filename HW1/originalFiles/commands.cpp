@@ -9,7 +9,6 @@ using namespace std;
 list<string> historyList; 
 list<jobs> jobsList;
 char* delimiters = " \t\n";  
-char* SHELL = "/bin/sh";
 //Local functions declarations:
 
 void updateHistoryList(char* cmdString); 
@@ -161,18 +160,20 @@ int ExeComp(char* lineSize)
         if (lineSize[strlen(lineSize)-2] == '&')
             bg = true;
         //run the command
-        pid_t currentPid;     
         
-        fork();
-        currentPid = getpid(); //check if you're the father or the son
-        if (currentPid){ //if you're the son.
-            execl(SHELL,SHELL,lineSize);
+        pid_t childPid = fork(); 
+        if (!childPid){ //if you're the son.
+            cout << "Trying first exec:" << endl;
+            int x = execl("csh","csh","-f","-c",lineSize,(char*)NULL);
+            cout << "first exec had failed, it had returned " << x << " trying exec2" << endl;
+            x = execl("csh","csh","-f","-c",lineSize,NULL);
+            cout << "DAFAQ? I AM THE CHILD I SHOULD NOT BE RUNNING!!!!!" << endl;
         } 
         //if it's the father:
 
         if (bg){ //add to jobs list
             string nameString(lineSize); //change the command name from char * to string
-            updateJobsList(nameString,currentPid);
+            updateJobsList(nameString,childPid);
         }            
         return(1);
 
