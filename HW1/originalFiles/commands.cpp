@@ -17,7 +17,7 @@ static char* prev_dir;
 typedef struct Job{
 	int pid;
 	char* name;
-	int start_time;
+	time_t start_time;
 } Job;
 
 std::list<Job> jobs;
@@ -259,11 +259,11 @@ void jobs_cmd()
 {
 	update_jobs();
 	int i = 1;
-	int time;
+	double dur;
 	for(std::list<Job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
 	{
-		int dur = time(NULL)-it->start_time;
-		printf("[%d] %s : %d %d secs",i,it->name,it->pid,dur);
+		dur = difftime(time(NULL),it->start_time);
+		printf("[%d] %s : %d %f secs",i,it->name,it->pid,dur);
 				i++;
 	}
 }
@@ -275,7 +275,7 @@ void update_jobs()
 	{
 		if(waitpid(it->pid,NULL,WNOHANG))
 		{
-			it.erase (it);
+			jobs.erase (it);
 			continue;
 		}
 		else
@@ -287,7 +287,7 @@ void update_jobs()
 
 void showpid_cmd()
 {
-	printf("smash pid is $d",getpid());
+	printf("smash pid is %d",getpid());
 }
 
 
