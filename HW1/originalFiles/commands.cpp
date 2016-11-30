@@ -77,7 +77,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
 	{
-		
+        showpid_cmd();    		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
@@ -227,7 +227,10 @@ void updateHistoryList(char* cmdString){
 
 
 
-
+void showpid_cmd(){
+    //pid_t id = getpid();
+   cout << "smash pid is " << getpid() << endl; 
+}
 
 
 
