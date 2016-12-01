@@ -13,6 +13,8 @@ char* delimiters = " \t\n";
 
 void updateHistoryList(char* cmdString); 
 void updateJobsList(string name, pid_t pid);
+void removeFinishedJobs(); 
+
 
 //********************************************
 // function name: ExeCmd
@@ -70,9 +72,9 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	}
 	/*************************************************/
 	
-	else if (!strcmp(cmd, "jobs")) 
+	else if (strcmp(cmd, "jobs") == 0) 
 	{
-        void jobs_cmd(); 		
+        jobs_cmd(); 		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
@@ -161,7 +163,6 @@ int ExeComp(char* lineSize)
             bg = true;
         //run the command
        
-        cout << "linesize is: " << lineSize << endl;
        //Prepare commands:
         char* argsArray[] = {"csh","-f","-c",lineSize, NULL}; //Create args array.
 
@@ -266,6 +267,8 @@ void showpid_cmd(){
 //Shows all jobs.
 void jobs_cmd(){
     int i = 0; 
+    removeFinishedJobs();// update list before priting it
+    //cout << "entered jobs_cmd!" << endl;
     int curTime = int(time(NULL));
     for (list<jobs>::const_iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
         //print all jobs
@@ -279,16 +282,40 @@ void jobs_cmd(){
 
 
 void updateJobsList(string name, pid_t pid){
+    removeFinishedJobs();
     if (jobsList.size() >= MAX_JOBS){
         cerr << "There are more than " << MAX_JOBS << "job isn't added to jobs List" << endl;
         return;
         }
+    //chomp \n form string 
+    if (!name.empty() && name[name.length()-1]== '\n')
+        name.erase(name.length()-1); 
     jobs newJob(name, pid);
+    //cout << "new job created. job name is:" << newJob.name << " pid is: " << newJob.pid << endl;
     jobsList.push_back(newJob);
 
 }
 
 
+void removeFinishedJobs(){
+    // iterate through jobsList and remove finished jobs.    
+    
+    list<jobs>::iterator it = jobsList.begin();
+    while (it != jobsList.end()){
+        //check if a process still runs, if a kill with signal 0 has a return value
+        //that is different than 0 then the process doesn't exist. signal 0 only checks if a 
+        //process exists.
+        if (!kill(it->pid, 0))
+            it++;
+        //else - if this process dosn't exist - remove it.
+        else  {
+            jobsList.erase(it++); // remove element.
+        } 
+
+    }
+         
+
+}
 
 
 
