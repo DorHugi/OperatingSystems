@@ -14,6 +14,7 @@ char* delimiters = " \t\n";
 void updateHistoryList(char* cmdString); 
 void updateJobsList(string name, pid_t pid);
 void removeFinishedJobs(); 
+jobs* findJob(int jobNum);
 
 
 //********************************************
@@ -82,6 +83,11 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
         showpid_cmd();    		
 	}
 	/*************************************************/
+	else if (!strcmp(cmd, "kill")) 
+	{
+        kill_cmd(string(cmd));    		
+	}
+	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
 	{
 		
@@ -117,33 +123,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 //**************************************************************************************
 void ExeExternal(char *args[MAX_ARG], char* cmdString)
 {
-	int pID;
-    	switch(pID = fork()) 
-	{
-    		case -1: 
-					// Add your code here (error)
-					
-					/* 
-					your code
-					*/
-                break;
-        	case 0 :
-                	// Child Process
-               		setpgrp();
-					
-			        // Add your code here (execute an external command)
-					
-					/* 
-					your code
-					*/
-		        break;	
-			default:
-                	// Add your code here
-				printf("Hello!\n");	
-					/* 
-					your code
-					*/
-	}
+    cout << "Got to external command" << endl;
 }
 //**************************************************************************************
 // function name: ExeComp
@@ -319,6 +299,46 @@ void removeFinishedJobs(){
 
 
 
+void kill_cmd(string cmd){
+    //send signal to process.
+    //Prase the command.
+    // comd syntax: kill -<signun> <job number>
+    
+    char delim = ' '; 
 
+    vector<string> elems;
+    stringstream ss;
+    ss.str(cmd);
+    string item;
+    while (getline(ss, item, delim)) 
+        elems.push_back(item);
+
+    string kill = elems[0]; 
+    int signal = atoi(elems[1].erase(0,1).c_str()); 
+    int jobNum = atoi(elems[2].c_str()); 
+    
+    jobs* curJob = findJob(jobNum) 
+    if (!curJob){
+        cout << "smash error:> kill " << jobNum << " - job does not exist" << endl;
+        return;
+    }
+
+    if (kill(curJob->pid,signal)) //returns non zero if failed:
+        cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
+    return;
+}
+
+ 
+-     
+-//return a pointer to job jobNum in jobslist.
+-jobs* findJob(int jobNum){
+-    int count = 0;
+-    for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
+-        if (count == jobNum){
+-            return (it); //jobs are sorted.
+-            count++;
+-        }
+-    return(NULL); //job wasn't found
+-}
 
 
