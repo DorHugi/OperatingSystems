@@ -30,6 +30,6 @@ void showpid_cmd();
 void update_jobs();
 void jobs_cmd();
 void history_cmd();
-bool cd_cmd(const char* path);
+void cd_cmd(const char* path);
 #endif
 

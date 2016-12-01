@@ -1,7 +1,7 @@
 //		commands.c
 //********************************************
 #include "commands.h"
-
+#include <dirent.h>
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
@@ -20,7 +20,7 @@ typedef struct Job{
 	time_t start_time;
 } Job;
 
-std::list<Job> jobs;
+std::list<Job> jobsArr;
 
 int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 {
@@ -30,13 +30,13 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
-	if(num_cmd_history==MAX_CMD_HISTORY)
+	/*if(num_cmd_history==MAX_CMD_HISTORY)
 	{
 		strcpy(cmd_history[MAX_CMD_HISTORY-1],"");//todo: change to list
 		num_cmd_history--;
 	}
 	strcpy(cmd_history[num_cmd_history], cmdString);
-	num_cmd_history++;
+	num_cmd_history++;*/
 	cmd = strtok(lineSize, delimiters);
     	cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
@@ -218,24 +218,38 @@ void pwd_cmd(){
 
 bool cd_cmd(const char* path)
 {
+	printf("0\n");
 	char buf[MAX_BUF];
+	printf("7\n");
 	size_t size=MAX_BUF;
-	char* tmp_dir=getcwd(buf,size);
-	if(!strcmp(path,"-"))
+	printf("8\n");
+	char* tmp_dir=getcwd(buf,MAX_BUF);
+	printf("9\n");
+	char* tmp_str=strdup(path);
+	printf("10\n");
+	if(strcmp(path,"-")==0)
 	{
-		chdir(strcat("~/",prev_dir));
-		prev_dir=tmp_dir;
+		printf("4\n");
+		chdir(prev_dir);
+		printf("11\n");
+		strcpy(prev_dir,tmp_dir);
+		free(tmp_dir);
 		return true;
 	}
 	else
 	{
-		if(chdir(path))
+	printf("1\n");
+		if(opendir(path))
 		{
-			prev_dir=tmp_dir;
+			printf("2\n");
+			strcpy(prev_dir,tmp_dir);
+			free(tmp_dir);
 			return true;
 		}
 		else
 		{
+			printf("3\n");
+			free(tmp_dir);
 			return false;
 		}
 	}
@@ -260,7 +274,7 @@ void jobs_cmd()
 	update_jobs();
 	int i = 1;
 	double dur;
-	for(std::list<Job>::iterator it=jobs.begin();it!=jobs.end(); ++it)
+	for(std::list<Job>::iterator it=jobsArr.begin();it!=jobsArr.end(); ++it)
 	{
 		dur = difftime(time(NULL),it->start_time);
 		printf("[%d] %s : %d %f secs",i,it->name,it->pid,dur);
@@ -270,12 +284,12 @@ void jobs_cmd()
 
 void update_jobs()
 {
-	std::list<Job>::iterator it=jobs.begin();
-	while(it!=jobs.end())
+	std::list<Job>::iterator it=jobsArr.begin();
+	while(it!=jobsArr.end())
 	{
 		if(waitpid(it->pid,NULL,WNOHANG))
 		{
-			jobs.erase (it);
+			jobsArr.erase (it);
 			continue;
 		}
 		else
