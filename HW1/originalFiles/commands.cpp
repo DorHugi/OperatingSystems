@@ -160,22 +160,37 @@ int ExeComp(char* lineSize)
         if (lineSize[strlen(lineSize)-2] == '&')
             bg = true;
         //run the command
-        
+       
+        cout << "linesize is: " << lineSize << endl;
+       //Prepare commands:
+        char* argsArray[] = {"csh","-f","-c",lineSize, NULL}; //Create args array.
+
+
         pid_t childPid = fork(); 
+        
+        if (childPid == -1){
+            cerr << "smash error: " << lineSize << endl;
+            return(1);
+        }
+
         if (!childPid){ //if you're the son.
-            cout << "Trying first exec:" << endl;
-            int x = execl("csh","csh","-f","-c",lineSize,(char*)NULL);
-            cout << "first exec had failed, it had returned " << x << " trying exec2" << endl;
-            x = execl("csh","csh","-f","-c",lineSize,NULL);
-            cout << "DAFAQ? I AM THE CHILD I SHOULD NOT BE RUNNING!!!!!" << endl;
-        } 
+        
+        //execute command:
+        int excReturncode  = execvp(*argsArray, argsArray);
+
+        if (excReturncode == -1){
+            cerr << "smash error: " << lineSize << endl;
+            exit(-1);
+            } 
+        }
+        
         //if it's the father:
 
         if (bg){ //add to jobs list
             string nameString(lineSize); //change the command name from char * to string
             updateJobsList(nameString,childPid);
         }            
-        return(1);
+        return(0);
 
 	} 
 	return -1;
