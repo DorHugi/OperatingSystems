@@ -10,9 +10,8 @@
 //**************************************************************************************
 
 
-static char* cmd_history[MAX_CMD_HISTORY];
 static int num_cmd_history;
-static char* prev_dir;
+static char prev_dir[MAX_LINE_SIZE];
 
 typedef struct Job{
 	int pid;
@@ -30,16 +29,8 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
-	/*if(num_cmd_history==MAX_CMD_HISTORY)
-	{
-		strcpy(cmd_history[MAX_CMD_HISTORY-1],"");//todo: change to list
-		num_cmd_history--;
-	}
-	strcpy(cmd_history[num_cmd_history], cmdString);
-	num_cmd_history++;*/
 	cmd = strtok(lineSize, delimiters);
-    	cmd = strtok(lineSize, delimiters);
-	if (cmd == NULL)
+  	if (cmd == NULL)
 		return 0; 
    	args[0] = cmd;
 	for (i=1; i<MAX_ARG; i++)
@@ -56,7 +47,14 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-	  illegal_cmd = cd_cmd(args[1]);
+		if(num_arg==1)
+		{
+			illegal_cmd = cd_cmd(args[1]);
+		}
+		else
+		{
+			printf("wrong number of parameters\n");
+		}
 	} 
 	
 	/*************************************************/
@@ -212,48 +210,36 @@ void pwd_cmd(){
         exit(-1);
     }
     //else
-    printf("%s",cwdBuf);
+    printf("%s\n",cwdBuf);
 }
 
 
 bool cd_cmd(const char* path)
 {
-	printf("0\n");
 	char buf[MAX_BUF];
-	printf("7\n");
 	size_t size=MAX_BUF;
-	printf("8\n");
 	char* tmp_dir=getcwd(buf,MAX_BUF);
-	printf("9\n");
-	char* tmp_str=strdup(path);
-	printf("10\n");
-	if(strcmp(path,"-")==0)
+	if(path!=NULL && strcmp(path,"-")==0)
 	{
-		printf("4\n");
 		chdir(prev_dir);
-		printf("11\n");
 		strcpy(prev_dir,tmp_dir);
-		free(tmp_dir);
-		return true;
+		return false;
 	}
 	else
 	{
-	printf("1\n");
 		if(opendir(path))
 		{
-			printf("2\n");
+			chdir(path);
 			strcpy(prev_dir,tmp_dir);
-			free(tmp_dir);
-			return true;
+			return false;
 		}
 		else
 		{
-			printf("3\n");
-			free(tmp_dir);
-			return false;
+			return true;
 		}
 	}
 }
+
 
 void history_cmd()
 {
