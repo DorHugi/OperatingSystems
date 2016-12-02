@@ -15,7 +15,7 @@ void updateHistoryList(char* cmdString);
 void updateJobsList(string name, pid_t pid);
 void removeFinishedJobs(); 
 jobs* findJob(int jobNum);
-
+static char prev_dir[MAX_LINE_SIZE];
 
 //********************************************
 // function name: ExeCmd
@@ -49,7 +49,14 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-		
+		if(num_arg==1)
+		{
+			illegal_cmd = cd_cmd(args[1]);
+		}
+		else
+		{
+			printf("wrong number of parameters\n");
+		}
 	} 
 	
 	/*************************************************/
@@ -344,3 +351,28 @@ jobs* findJob(int jobNum){
 }
 
 
+bool cd_cmd(const char* path)
+{
+	char buf[MAX_BUF];
+	size_t size=MAX_BUF;
+	char* tmp_dir=getcwd(buf,MAX_BUF);
+	if(path!=NULL && strcmp(path,"-")==0)
+	{
+		chdir(prev_dir);
+		strcpy(prev_dir,tmp_dir);
+		return false;
+	}
+	else
+	{
+		if(opendir(path))
+		{
+			chdir(path);
+			strcpy(prev_dir,tmp_dir);
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+}

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <dirent.h>
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
@@ -33,8 +34,10 @@ void pwd_cmd();
 void history_cmd();
 void jobs_cmd(); 		
 void kill_cmd(string cmd);
+bool cd_cmd(const char* path);
 
 //Classes:
+
 
 class jobs {
     public:
