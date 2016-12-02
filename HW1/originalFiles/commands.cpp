@@ -257,7 +257,7 @@ void showpid_cmd(){
 
 //Shows all jobs.
 void jobs_cmd(){
-    int i = 0; 
+    int i = 1; 
     removeFinishedJobs();// update list before priting it
     //cout << "entered jobs_cmd!" << endl;
     int curTime = int(time(NULL));
@@ -330,7 +330,7 @@ void kill_cmd(int signal, int jobNum){
      
 //return a pointer to job jobNum in jobslist.
 jobs* findJob(int jobNum){
-    int count = 0;
+    int count = 1;
     for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
         if (count == jobNum){
             return (&(*it)); //jobs are sorted.
