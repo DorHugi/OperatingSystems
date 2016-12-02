@@ -74,11 +74,6 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	}
 	
 	/*************************************************/
-	else if (!strcmp(cmd, "mkdir"))
-	{
- 		
-	}
-	/*************************************************/
 	
 	else if (strcmp(cmd, "jobs") == 0) 
 	{
@@ -371,3 +366,5 @@ bool cd_cmd(const char* path)
 		}
 	}
 }
+
+
