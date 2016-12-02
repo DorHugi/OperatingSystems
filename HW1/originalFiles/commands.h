@@ -11,6 +11,8 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <sstream>
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024

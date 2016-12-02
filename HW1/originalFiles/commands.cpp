@@ -85,7 +85,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "kill")) 
 	{
-        kill_cmd(string(cmd));    		
+        kill_cmd(string(lineSize));    		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
@@ -253,8 +253,8 @@ void jobs_cmd(){
     for (list<jobs>::const_iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
         //print all jobs
         int timePassed = curTime - it->startTime;
-        cout << it->name << " : " << it->pid << " " << timePassed << " secs " << it->isSuspended<<endl;
-
+        cout << "[" << i << "] " << it->name << " : " << it->pid << " " << timePassed << " secs " << it->isSuspended<<endl;
+        i++;
 
     }
 
@@ -288,9 +288,9 @@ void removeFinishedJobs(){
         if (!kill(it->pid, 0))
             it++;
         //else - if this process dosn't exist - remove it.
-        else  {
+        else  
             jobsList.erase(it++); // remove element.
-        } 
+         
 
     }
          
@@ -312,12 +312,13 @@ void kill_cmd(string cmd){
     string item;
     while (getline(ss, item, delim)) 
         elems.push_back(item);
-
-    string kill = elems[0]; 
+    if (elems.size() < 3){
+        cout << "smash error:> kill commands parameters are illegal" << endl;
+        return;
+    }
     int signal = atoi(elems[1].erase(0,1).c_str()); 
     int jobNum = atoi(elems[2].c_str()); 
-    
-    jobs* curJob = findJob(jobNum) 
+    jobs* curJob = findJob(jobNum);
     if (!curJob){
         cout << "smash error:> kill " << jobNum << " - job does not exist" << endl;
         return;
@@ -329,16 +330,17 @@ void kill_cmd(string cmd){
 }
 
  
--     
--//return a pointer to job jobNum in jobslist.
--jobs* findJob(int jobNum){
--    int count = 0;
--    for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
--        if (count == jobNum){
--            return (it); //jobs are sorted.
--            count++;
--        }
--    return(NULL); //job wasn't found
--}
+     
+//return a pointer to job jobNum in jobslist.
+jobs* findJob(int jobNum){
+    int count = 0;
+    for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
+        if (count == jobNum){
+            return (&(*it)); //jobs are sorted.
+            count++;
+        }
+    }
+    return(NULL); //job wasn't found
+}
 
 
