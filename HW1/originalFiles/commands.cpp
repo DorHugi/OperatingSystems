@@ -91,8 +91,17 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "kill")) 
+
 	{
-        kill_cmd(string(lineSize));    		
+        //expecting to get job num and kill signal.
+        //arg 1 is -<signal> ,arg 2 is job num.
+
+        string sigString(args[1]);
+        int signal = atoi(sigString.erase(0,1).c_str()); //Delete - sign. 
+        cout << "signal is : " << signal << endl;
+        int jobNum = atoi(args[2]);
+        cout << "jobNum is: " << jobNum << endl;
+        kill_cmd(signal,jobNum);    		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
@@ -306,31 +315,17 @@ void removeFinishedJobs(){
 
 
 
-void kill_cmd(string cmd){
+void kill_cmd(int signal, int jobNum){
     //send signal to process.
     //Prase the command.
     // comd syntax: kill -<signun> <job number>
-    
-    char delim = ' '; 
 
-    vector<string> elems;
-    stringstream ss;
-    ss.str(cmd);
-    string item;
-    while (getline(ss, item, delim)) 
-        elems.push_back(item);
-    if (elems.size() < 3){
-        cout << "smash error:> kill commands parameters are illegal" << endl;
-        return;
-    }
-    int signal = atoi(elems[1].erase(0,1).c_str()); 
-    int jobNum = atoi(elems[2].c_str()); 
     jobs* curJob = findJob(jobNum);
     if (!curJob){
         cout << "smash error:> kill " << jobNum << " - job does not exist" << endl;
         return;
     }
-
+    //cout << "pid of the killed process is : " << curJob->pid << endl;
     if (kill(curJob->pid,signal)) //returns non zero if failed:
         cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
     return;

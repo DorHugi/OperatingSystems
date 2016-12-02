@@ -33,8 +33,8 @@ void showpid_cmd();
 void pwd_cmd();
 void history_cmd();
 void jobs_cmd(); 		
-void kill_cmd(string cmd);
 bool cd_cmd(const char* path);
+void kill_cmd(int signal, int jobNum);
 
 //Classes:
 
