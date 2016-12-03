@@ -406,17 +406,15 @@ void kill_cmd(int signal, int jobNum){
     //send signal to process.
     //Prase the command.
     // comd syntax: kill -<signun> <job number>
-
-    jobs* curJob = findJob(jobNum);
+  jobs* curJob = findJob(jobNum);
+    
     if (!curJob){
         cout << "smash error:> kill " << jobNum << " - job does not exist" << endl;
         return;
     }
     //cout << "pid of the killed process is : " << curJob->pid << endl;
-    if (kill(curJob->pid,signal)) //returns non zero if failed:
-        cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
-    if (signal == 20) //i.e - SIGTSTP - ctrl Z:
-        curJob->suspend();    //print that this process is suspended.
+    if (send_signal(curJob->pid,signal)) //returns non zero if failed:        
+    
     return;
 }
 
@@ -515,7 +513,7 @@ void bg_cmd(int jobNum){
 
     //job was found.
 
-    kill(curJob->pid,18); //Send sigcont
+    send_signal(curJob->pid,18); //Send sigcont
     curJob->unsuspend();
 
 

@@ -33,5 +33,17 @@ void signal_handler(int signum)
 
 void send_signal(pid_t pid, int signum)
 {
-    printf("signal: %s was sent to pid %d", /*add signal name*/,(int)pid);
+jobs* curJob = findJob(jobNum);
+    
+    int rc = kill(pid, signum);
+    if(rc!=0)
+    {
+      printf("tried to senf signal anf failed\n");
+    }
+    else
+    {
+        if (signal == 20) //i.e - SIGTSTP - ctrl Z:
+            curJob->suspend();    //print that this process is suspended.
+        printf("signal: %s was sent to pid %d\n",sigNumToName(signum),(int)pid);
+    }    
 }
