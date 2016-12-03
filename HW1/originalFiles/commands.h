@@ -53,8 +53,9 @@ class jobs {
         //functions:
         jobs(string _name, pid_t _pid):name(_name),pid(_pid),isSuspended(""){
             startTime = int(time(NULL));   
-
         }
+        void suspend() {isSuspended = "(Stopped)";}
+        void unsuspend() {isSuspended = "";}
 };
 #endif
 

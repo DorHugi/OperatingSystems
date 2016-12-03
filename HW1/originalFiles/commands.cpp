@@ -116,7 +116,7 @@ int ExeCmd(char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "bg")) 
 	{
-  		
+        //bg_cmd();  		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
@@ -379,6 +379,8 @@ void kill_cmd(int signal, int jobNum){
     //cout << "pid of the killed process is : " << curJob->pid << endl;
     if (kill(curJob->pid,signal)) //returns non zero if failed:
         cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
+    if (signal == 20) //i.e - SIGTSTP - ctrl Z:
+        curJob->suspend();    //print that this process is suspended.
     return;
 }
 
