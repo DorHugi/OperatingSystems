@@ -162,6 +162,9 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
     else if (pid){ //father. Add to jobs list.
         cout << "cmdString is " << cmdString << endl;
         int state;
+        // update that this job is currentlly running.
+        cmdToString(cmdString);
+        update_curJob(cmdToString,int(time(NULL)),pid,""); 
         waitpid(pid, &state, WUNTRACED);
         return; // finish.
     }
@@ -210,6 +213,8 @@ int ExeComp(char* lineSize)
                 updateJobsList(nameString,pid);
             }            
             else {
+                string cmdToString(lineSize);
+                update_curJob(cmdToString,int(time(NULL)),pid,""); 
                 waitpid(pid, NULL, WUNTRACED); 
             }
             return (0);

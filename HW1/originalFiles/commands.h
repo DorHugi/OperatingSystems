@@ -38,7 +38,7 @@ void jobs_cmd();
 bool cd_cmd(const char* path);
 void kill_cmd(int signal, int jobNum);
 void fg_cmd(char* ser);
-
+void update_curJob(string name,int startTime, pid_t pid, string isSuspended)
 //Classes:
 
 
