@@ -16,7 +16,7 @@
 #include <errno.h>
 #include <sstream>
 #include <dirent.h>
-
+#include "jobs.h"
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
@@ -43,27 +43,7 @@ void fg_cmd(char* ser);
 void quit_cmd();
 void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
 
-//Classes:
 
-
-class jobs {
-    public:
-        //Class variables.
-        string name;
-        int startTime;
-        pid_t pid; 
-        string isSuspended;//This string is set to "(Stopped)" if the process is suspended.
-                           //and empty string otherwise (default).
-        //functions:
-        jobs(string _name, pid_t _pid):name(_name),pid(_pid),isSuspended(""){
-            startTime = int(time(NULL));   
-
-        }
-        jobs():name(""),pid(-1),isSuspended(""),startTime(-1){}
-        
-        void suspend() {isSuspended = "(Stopped)";}
-        void unsuspend() {isSuspended = "";}
-};
 
 
 #endif

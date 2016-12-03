@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-
+#include "jobs.h"
 void signal_handler(int signum);
 
 
