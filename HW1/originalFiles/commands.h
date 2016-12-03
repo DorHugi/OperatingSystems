@@ -31,7 +31,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString);
 void showpid_cmd();    		
 
 //My functions:
-
+void bg_cmd(int jobNum);
 void pwd_cmd();
 void history_cmd();
 void jobs_cmd(); 		

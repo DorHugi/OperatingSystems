@@ -116,7 +116,14 @@ int ExeCmd(char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "bg")) 
 	{
-        //bg_cmd();  		
+        int jobNum;
+        if (args[1]) //if args1 is not NULL. ie - we're given a job number argument.
+            jobNum = atoi(args[1]);
+        else
+            jobNum = -1; //-1 indicates no job was given.
+
+
+        bg_cmd(jobNum);  		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
@@ -145,6 +152,31 @@ int ExeCmd(char* lineSize, char* cmdString)
 void ExeExternal(char *args[MAX_ARG], char* cmdString)
 {
     cout << "Got to external command" << endl;
+    pid_t pid = fork();
+
+    if (pid == -1) {
+        cout << "Fork has failed. Exiting program" << endl;
+        exit(1);
+    }
+
+    else if (pid){ //father. Add to jobs list.
+        cout << "cmdString is " << cmdString << endl;
+        int state;
+        waitpid(pid, &state, WUNTRACED);
+        return; // finish.
+    }
+
+    else { //son
+        setpgrp();
+        execvp(*args,args);
+
+
+        cout << "errno is: " << strerror(errno) << endl;
+        exit(1);
+
+        }
+
+
 }
 
 
@@ -386,7 +418,7 @@ void kill_cmd(int signal, int jobNum){
 
  
      
-//return a pointer to job jobNum in jobslist.
+//return a pointer to job jobNum in jobslist. or null if not found.
 jobs* findJob(int jobNum){
     int count = 1;
     for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
@@ -443,3 +475,31 @@ void fg_cmd(char* ser)
 
 
 
+void bg_cmd(int jobNum){
+
+    jobs* curJob;
+    // jobNum = -1 means no job num argument was given. 
+   if (jobNum == -1){ //no job was given.
+       //find last suspended job and run it.
+         
+        list<jobs>::iterator it = jobsList.begin();
+        while ((++it) != jobsList.end()) //get to one after last elemnt.
+            break;
+        it--; //return it to point last elemnt.
+        curJob = &(*it);
+   } 
+   else
+        curJob = findJob(jobNum); 
+
+   if (!curJob){ // job was not found.
+        cerr << "job number: " << jobNum  << "wasn't found. bg failed" << endl;
+        return;
+   }    
+
+    //job was found.
+
+    kill(curJob->pid,18); //Send sigcont
+    curJob->unsuspend();
+
+
+}
