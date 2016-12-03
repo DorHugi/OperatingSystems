@@ -17,6 +17,7 @@ void removeFinishedJobs();
 jobs* findJob(int jobNum);
 static char prev_dir[MAX_LINE_SIZE];
 
+string sigNumToName (int sigNum);
 
 //********************************************
 // function name: ExeCmd
@@ -164,7 +165,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
         cout << "cmdString is " << cmdString << endl;
         int state;
         // update that this job is currentlly running.
-        cmdToString(cmdString);
+        string cmdToString(cmdString);
         update_curJob(cmdToString,int(time(NULL)),pid,""); 
         waitpid(pid, &state, WUNTRACED);
         return; // finish.
@@ -414,6 +415,8 @@ void kill_cmd(int signal, int jobNum){
     //cout << "pid of the killed process is : " << curJob->pid << endl;
     if (kill(curJob->pid,signal)) //returns non zero if failed:
         cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
+    if (signal == 20) //i.e - SIGTSTP - ctrl Z:
+        curJob->suspend();    //print that this process is suspended.
     return;
 }
 
@@ -524,8 +527,8 @@ void bg_cmd(int jobNum){
 string sigNumToName (int sigNum){
 
 
-string sigName[]={"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", NULL};
+    string sigName[]={"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", NULL};
 
-return (sigName[sigNum]);
+    return (sigName[sigNum]);
 
 }

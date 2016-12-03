@@ -45,7 +45,6 @@ void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
 
 //Classes:
 
-string sigNumToName (int sigNum){
 
 class jobs {
     public:
@@ -62,7 +61,8 @@ class jobs {
         }
         jobs():name(""),pid(-1),isSuspended(""),startTime(-1){}
         
-
+        void suspend() {isSuspended = "(Stopped)";}
+        void unsuspend() {isSuspended = "";}
 };
 
 
