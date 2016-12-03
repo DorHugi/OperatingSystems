@@ -7,3 +7,16 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
+void signal_handler(int signum)
+{
+  //  if(cur_job!=NULL && waitpid(cur_job->pid,NULL,WNOHANG)){
+        if(signum == SIGINT)
+        {
+            
+        }
+        else if(signum == SIGTSTP)
+        {
+            
+        }  
+   // }
+}

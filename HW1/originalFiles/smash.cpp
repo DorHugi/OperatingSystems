@@ -13,16 +13,20 @@ main file. This file contains the main function of smash
 #define MAX_LINE_SIZE 80
 #define MAXARGS 20
 
+
 char* L_Fg_Cmd;
 char lineSize[MAX_LINE_SIZE]; 
+
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
 //**************************************************************************************
 int main(int argc, char *argv[])
 {
-    char cmdString[MAX_LINE_SIZE]; 	   
-
+  char cmdString[MAX_LINE_SIZE]; 	   
+    struct sigaction act;
+    act.sa_handler = &signal_handler;
+    sigaction(SIGINT, &act, NULL);
 	
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c

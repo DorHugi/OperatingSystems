@@ -1,7 +1,6 @@
 //		commands.cpp
 //********************************************
 #include "commands.h"
-
 using namespace std;
 
 //Global variables:
@@ -9,6 +8,7 @@ using namespace std;
 list<string> historyList; 
 list<jobs> jobsList;
 char* delimiters = " \t\n";  
+
 //Local functions declarations:
 
 void updateHistoryList(char* cmdString); 
@@ -16,6 +16,7 @@ void updateJobsList(string name, pid_t pid);
 void removeFinishedJobs(); 
 jobs* findJob(int jobNum);
 static char prev_dir[MAX_LINE_SIZE];
+
 
 //********************************************
 // function name: ExeCmd
@@ -128,7 +129,7 @@ int ExeCmd(char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-   		
+   		quit_cmd();
 	} 
 	/*************************************************/
 	else // external command
@@ -315,14 +316,11 @@ void pwd_cmd(){
         perror("Error in pwd_cmd\n");
         exit(-1);
     }
-    //else
     printf("%s\n",cwdBuf);
 }
 
 
 void history_cmd(){
-
-    
     for (list<string>::const_iterator it = historyList.begin() ; it != historyList.end() ; it++)
         cout << *it << endl;
 }
@@ -416,8 +414,6 @@ void kill_cmd(int signal, int jobNum){
     //cout << "pid of the killed process is : " << curJob->pid << endl;
     if (kill(curJob->pid,signal)) //returns non zero if failed:
         cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
-    if (signal == 20) //i.e - SIGTSTP - ctrl Z:
-        curJob->suspend();    //print that this process is suspended.
     return;
 }
 
@@ -473,11 +469,24 @@ void fg_cmd(char* ser)
 		printf("Error: No such job\n");
 	}
 	else
-	{    
-    waitpid(findJob(serInt)->pid, &state, WUNTRACED);
+	{   
+     update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);
+     waitpid(findJob(serInt)->pid, &state, WUNTRACED);
 	}
 }
 
+void quit_cmd()
+{
+  exit(1);
+}
+
+void update_curJob(string name,int startTime, pid_t pid, string isSuspended)
+{
+    //cur_job->name =  name;
+ //   cur_job->startTime = startTime;
+   // cur_job->pid = pid;
+   // cur_job->isSuspended= isSuspended;
+}
 
 
 void bg_cmd(int jobNum){
