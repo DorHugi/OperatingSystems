@@ -9,6 +9,7 @@
 #include <signal.h>
 
 void signal_handler(int signum);
+void send_signal(pid_t pid, int signum);
 
 
 #endif

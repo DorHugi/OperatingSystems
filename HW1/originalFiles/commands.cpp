@@ -482,10 +482,10 @@ void quit_cmd()
 
 void update_curJob(string name,int startTime, pid_t pid, string isSuspended)
 {
-    //cur_job->name =  name;
- //   cur_job->startTime = startTime;
-   // cur_job->pid = pid;
-   // cur_job->isSuspended= isSuspended;
+    cur_job.name =  name;
+    cur_job.startTime = startTime;
+    cur_job.pid = pid;
+    cur_job.isSuspended= isSuspended;
 }
 
 
