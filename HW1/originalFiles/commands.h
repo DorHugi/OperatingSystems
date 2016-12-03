@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <errno.h>
 #include <sstream>
 #include <dirent.h>
 #define MAX_LINE_SIZE 80

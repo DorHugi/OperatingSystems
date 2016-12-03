@@ -148,44 +148,46 @@ int ExeComp(char* lineSize)
 	char *args[MAX_ARG];
     if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
     {
-        bool bg = false;
         //check if this is also a bg command.
+        bool bg = false;
         if (lineSize[strlen(lineSize)-2] == '&')
             bg = true;
-        //run the command
-       
-       //Prepare commands:
-        char* argsArray[] = {"csh","-f","-c",lineSize, NULL}; //Create args array.
 
+        pid_t pid = fork();
 
-        pid_t childPid = fork(); 
-        
-        if (childPid == -1){
-            cerr << "smash error: " << lineSize << endl;
-            return(1);
+        if (pid == -1) {
+            cout << "Fork has failed. Exiting program" << endl;
+            exit(1);
         }
 
-        if (!childPid){ //if you're the son.
-        
-        //execute command:
-        int excReturncode  = execvp(*argsArray, argsArray);
-
-        if (excReturncode == -1){
-            cerr << "smash error: " << lineSize << endl;
-            exit(-1);
-            } 
+        else if (pid){ //father.
+            if (bg) { //add to jobs list
+                string nameString(lineSize); //change the command name from char * to string
+                updateJobsList(nameString,pid);
+            }            
+            else {
+                waitpid(pid, NULL, WUNTRACED); 
+            }
+            return (0);
         }
-        
-        //if it's the father:
 
-        if (bg){ //add to jobs list
-            string nameString(lineSize); //change the command name from char * to string
-            updateJobsList(nameString,childPid);
-        }            
-        return(0);
+        else { //son
+            cout << "about to do exec. My pid is: " << getpid() << endl;
+            cout << "line size is: " << lineSize << endl;
+            setpgrp();
+            cout << "my id after chgrp is :" << getpid() << endl;
+            execl("/bin/bash", "/bin/bash","-c",lineSize,NULL);
+            //char* argsArr[] = {"csh","-f","-c",lineSize,NULL}; 
+            //execvp(*argsArr,argsArr);
 
-	} 
-	return -1;
+
+            cout << "I have continued after exec! my pid is: " << getpid() << endl;
+            cout << "errno is: " << strerror(errno) << endl;
+            exit(1);
+
+            }
+    }
+	return (-1);
 }
 //**************************************************************************************
 // function name: BgCmd
@@ -273,6 +275,10 @@ void jobs_cmd(){
 
 
 void updateJobsList(string name, pid_t pid){
+    //check if pid exists. Otherwise don't enter it.
+    if (kill(pid,0))
+        return; //return if pid doesnt exist.
+    
     removeFinishedJobs();
     if (jobsList.size() >= MAX_JOBS){
         cerr << "There are more than " << MAX_JOBS << "job isn't added to jobs List" << endl;
