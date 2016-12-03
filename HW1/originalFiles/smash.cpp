@@ -14,6 +14,8 @@ main file. This file contains the main function of smash
 #define MAXARGS 20
 
 
+jobs cur_job;
+
 char* L_Fg_Cmd;
 char lineSize[MAX_LINE_SIZE]; 
 

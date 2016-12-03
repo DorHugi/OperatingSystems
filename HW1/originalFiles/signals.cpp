@@ -6,7 +6,7 @@
 /* Name: handler_cntlc
    Synopsis: handle the Control-C */
 #include "signals.h"
-
+extern jobs cur_job;
 void signal_handler(int signum)
 {
     if(cur_job!=NULL && cur_job.pid!=-1 && waitpid(cur_job.pid,NULL,WNOHANG)){

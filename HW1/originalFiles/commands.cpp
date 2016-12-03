@@ -1,6 +1,7 @@
 //		commands.cpp
 //********************************************
 #include "commands.h"
+extern jobs cur_job;
 using namespace std;
 
 //Global variables:
