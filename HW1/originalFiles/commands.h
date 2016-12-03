@@ -25,8 +25,8 @@
 using namespace std;
 
 int ExeComp(char* lineSize);
-int BgCmd(char* lineSize, void* jobs);
-int ExeCmd(void* jobs, char* lineSize, char* cmdString);
+int BgCmd(char* lineSize);
+int ExeCmd(char* lineSize, char* cmdString);
 void ExeExternal(char *args[MAX_ARG], char* cmdString);
 void showpid_cmd();    		
 

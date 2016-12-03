@@ -23,7 +23,7 @@ static char prev_dir[MAX_LINE_SIZE];
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
-int ExeCmd(void* jobs, char* lineSize, char* cmdString)
+int ExeCmd(char* lineSize, char* cmdString)
 {
 	char* cmd; 
 	char* args[MAX_ARG];
@@ -136,6 +136,8 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 {
     cout << "Got to external command" << endl;
 }
+
+
 //**************************************************************************************
 // function name: ExeComp
 // Description: executes complicated command
@@ -195,21 +197,60 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, void* jobs)
+int BgCmd(char* lineSize)
 {
 
-	char* Command;
+
 	char* delimiters = " \t\n";
-	char *args[MAX_ARG];
+
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{
 		lineSize[strlen(lineSize)-2] = '\0';
-		// Add your code here (execute a in the background)
-					
-		/* 
-		your code
-		*/
-		
+
+        //Parse linesize:
+
+        char* cmd; 
+        char* args[MAX_ARG];
+        int i = 0, num_arg = 0;
+        cmd = strtok(lineSize, delimiters);
+        if (cmd == NULL)
+            return 0; 
+        args[0] = cmd;
+        for (i=1; i<MAX_ARG; i++)
+        {
+            args[i] = strtok(NULL, delimiters); 
+            if (args[i] != NULL) 
+                num_arg++; 
+
+        }
+
+        //Call external command. make sure to add it to bg.
+                   
+        pid_t pid = fork();
+
+        if (pid == -1) {
+            cout << "Fork has failed. Exiting program" << endl;
+            exit(1);
+        }
+
+        else if (pid){ //father. Add to jobs list.
+            string nameString(lineSize); //change the command name from char * to string
+            updateJobsList(nameString,pid);
+            return (0);
+        }
+
+        else { //son
+            setpgrp();
+            execvp(*args,args);
+
+
+            cout << "errno is: " << strerror(errno) << endl;
+            exit(1);
+
+            }
+
+
+
 	}
 	return -1;
 }
@@ -302,7 +343,10 @@ void removeFinishedJobs(){
         //check if a process still runs, if a kill with signal 0 has a return value
         //that is different than 0 then the process doesn't exist. signal 0 only checks if a 
         //process exists.
-        if (!kill(it->pid, 0))
+        //if (!kill(it->pid, 0))
+
+        cout << "wait pid on" << it -> pid << " is: " << waitpid(it->pid, NULL,WNOHANG) << endl;
+        if (!waitpid(it->pid, NULL,WNOHANG))
             it++;
         //else - if this process dosn't exist - remove it.
         else  
