@@ -101,6 +101,16 @@ int ExeCmd(char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
 	{
+     if(num_arg>1)
+     {
+         printf("too many arguments\n");
+     }
+     else if(num_arg==1)
+     {
+         fg_cmd(args[1]);
+     }
+     else 
+       fg_cmd("1");
 		
 	} 
 	/*************************************************/
@@ -334,7 +344,6 @@ void updateJobsList(string name, pid_t pid){
 
 }
 
-
 void removeFinishedJobs(){
     // iterate through jobsList and remove finished jobs.    
     
@@ -351,10 +360,7 @@ void removeFinishedJobs(){
         //else - if this process dosn't exist - remove it.
         else  
             jobsList.erase(it++); // remove element.
-         
-
-    }
-         
+                }     
 
 }
 
@@ -390,11 +396,10 @@ jobs* findJob(int jobNum){
     return(NULL); //job wasn't found
 }
 
-
 bool cd_cmd(const char* path)
 {
 	char buf[MAX_BUF];
-	size_t size=MAX_BUF;
+	//size_t size=MAX_BUF;
 	char* tmp_dir=getcwd(buf,MAX_BUF);
 	if(path!=NULL && strcmp(path,"-")==0)
 	{
@@ -416,5 +421,23 @@ bool cd_cmd(const char* path)
 		}
 	}
 }
+
+void fg_cmd(char* ser)
+{
+   int state;
+	 removeFinishedJobs();
+   printf("%s\n",ser);
+   const char* constSer=(const char*)ser;
+   int serInt=atoi(constSer);
+  if (findJob(serInt)==NULL)
+	{
+		printf("Error: No such job\n");
+	}
+	else
+	{    
+    waitpid(findJob(serInt)->pid, &state, WUNTRACED);
+	}
+}
+
 
 

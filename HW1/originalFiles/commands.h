@@ -37,6 +37,7 @@ void history_cmd();
 void jobs_cmd(); 		
 bool cd_cmd(const char* path);
 void kill_cmd(int signal, int jobNum);
+void fg_cmd(char* ser);
 
 //Classes:
 
