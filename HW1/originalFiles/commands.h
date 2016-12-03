@@ -41,6 +41,7 @@ void fg_cmd(char* ser);
 void update_curJob(string name,int startTime, pid_t pid, string isSuspended)
 //Classes:
 
+string sigNumToName (int sigNum){
 
 class jobs {
     public:
