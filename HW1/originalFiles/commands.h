@@ -16,12 +16,14 @@
 #include <errno.h>
 #include <sstream>
 #include <dirent.h>
+
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_BUF 1024
 #define MAX_HISTORY 50
 #define MAX_JOB_NAME 50
 #define MAX_JOBS 100
+
 using namespace std;
 
 int ExeComp(char* lineSize);
@@ -38,6 +40,8 @@ void jobs_cmd();
 bool cd_cmd(const char* path);
 void kill_cmd(int signal, int jobNum);
 void fg_cmd(char* ser);
+void quit_cmd();
+void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
 
 //Classes:
 
@@ -53,10 +57,14 @@ class jobs {
         //functions:
         jobs(string _name, pid_t _pid):name(_name),pid(_pid),isSuspended(""){
             startTime = int(time(NULL));   
+
         }
-        void suspend() {isSuspended = "(Stopped)";}
-        void unsuspend() {isSuspended = "";}
+        jobs():name(""),pid(-1),isSuspended(""),startTime(-1){}
+        
+
 };
+
+
 #endif
 
 
