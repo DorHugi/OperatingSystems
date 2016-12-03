@@ -13,7 +13,6 @@ char* delimiters = " \t\n";
 //Local functions declarations:
 
 void updateHistoryList(char* cmdString); 
-void updateJobsList(string name, pid_t pid);
 void removeFinishedJobs(); 
 jobs* findJob(int jobNum);
 static char prev_dir[MAX_LINE_SIZE];
@@ -414,7 +413,7 @@ void kill_cmd(int signal, int jobNum){
         return;
     }
     //cout << "pid of the killed process is : " << curJob->pid << endl;
-    if (send_signal(curJob->pid,signal)) //returns non zero if failed:        
+    send_signal(curJob->pid,signal); //returns non zero if failed:        
     
     return;
 }
@@ -531,3 +530,17 @@ string sigNumToName (int sigNum){
     return (sigName[sigNum]);
 
 }
+
+
+jobs* findJobByPid (pid_t pid){
+
+    list<jobs>::iterator it = jobsList.begin();
+    while ((it!= jobsList.end()) && (it->pid != pid))
+        it++;
+    if (it == jobsList.end()) //pid wasn't found.
+        return (NULL);
+    else
+        return (&(*it));
+
+}
+

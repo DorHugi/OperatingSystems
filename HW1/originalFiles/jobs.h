@@ -2,6 +2,12 @@
 #define _JOBS
 using namespace std;
 #include <string>
+void send_signal(pid_t pid, int signum);
+void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
+
+void updateJobsList(string name, pid_t pid);
+string sigNumToName (int sigNum);
+
 class jobs {
     public:
         //Class variables.
@@ -23,5 +29,6 @@ class jobs {
 };
 
 
+jobs* findJobByPid (pid_t pid);
 
 #endif

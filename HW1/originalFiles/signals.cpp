@@ -9,16 +9,16 @@
 extern jobs cur_job;
 void signal_handler(int signum)
 {
-    if(cur_job!=NULL && cur_job.pid!=-1 && waitpid(cur_job.pid,NULL,WNOHANG)){
+    if(cur_job.pid!=-1 && waitpid(cur_job.pid,NULL,WNOHANG)){
         if(signum == SIGINT)
         {
             update_curJob("",-1, -1, "");            
-            send_signal(pid,signum);
+            send_signal(cur_job.pid,signum);
             
         }
         else if(signum == SIGTSTP)
         {
-            pid_t pid=cur_job.pid
+            pid_t pid=cur_job.pid;
             updateJobsList(cur_job.name, pid);
             update_curJob("",-1, -1, "");        
             send_signal(pid,signum);    
@@ -33,7 +33,7 @@ void signal_handler(int signum)
 
 void send_signal(pid_t pid, int signum)
 {
-jobs* curJob = findJob(jobNum);
+jobs* curJob = findJobByPid(pid);
     
     int rc = kill(pid, signum);
     if(rc!=0)
@@ -42,7 +42,7 @@ jobs* curJob = findJob(jobNum);
     }
     else
     {
-        if (signal == 20) //i.e - SIGTSTP - ctrl Z:
+        if ((curJob!=NULL) && (signum == 20)) //i.e - SIGTSTP - ctrl Z:
             curJob->suspend();    //print that this process is suspended.
         printf("signal: %s was sent to pid %d\n",sigNumToName(signum),(int)pid);
     }    

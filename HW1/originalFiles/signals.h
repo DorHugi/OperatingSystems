@@ -9,7 +9,6 @@
 #include <signal.h>
 #include "jobs.h"
 void signal_handler(int signum);
-void send_signal(pid_t pid, int signum);
 
 
 #endif
