@@ -317,7 +317,7 @@ void jobs_cmd(){
 
 void updateJobsList(string name, pid_t pid){
     //check if pid exists. Otherwise don't enter it.
-    if (kill(pid,0))
+    if (waitpid(pid,NULL,WNOHANG)) //if process is dead
         return; //return if pid doesnt exist.
     
     removeFinishedJobs();
@@ -342,7 +342,7 @@ void removeFinishedJobs(){
     while (it != jobsList.end()){
         //check if a process still runs, if a kill with signal 0 has a return value
         //that is different than 0 then the process doesn't exist. signal 0 only checks if a 
-        //process exists.
+        //process g.
         //if (!kill(it->pid, 0))
 
         cout << "wait pid on" << it -> pid << " is: " << waitpid(it->pid, NULL,WNOHANG) << endl;
