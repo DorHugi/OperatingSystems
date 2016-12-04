@@ -427,7 +427,6 @@ void kill_cmd(int signal, int jobNum){
 jobs* findJob(int jobNum){
     int count = 1;
     for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
-        printf("findJob: count: %d\n",count);
         if (count == jobNum){
             return (&(*it)); //jobs are sorted.            
         }
@@ -475,14 +474,14 @@ void fg_cmd(char* ser)
 		printf("Error: No such job\n");
 	}
 	else
-	{   
-     update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);
-     
+	{   pid_t pid = findJob(serInt)->pid;
+     update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);     
      cout << "curJob was updated. Removing it from the jobsList" << endl;
      removeJob(serInt);     
-     int tempStart = time(NULL); 
-     waitpid(findJob(serInt)->pid, &state, WUNTRACED);
-     cout << "Time that process had spent in fg is: " << int(time(NULL)-tempStart) << endl;
+     printf("finished removing\n");
+     send_signal(pid,18);
+     waitpid(pid, &state, WUNTRACED);
+     printf("finished pid\n");     
 	}
 }
 
@@ -525,20 +524,12 @@ void bg_cmd(int jobNum){
 
     send_signal(curJob->pid,18); //Send sigcont
     curJob->unsuspend();
-
-
 }
 
-
-
-
 string sigNumToName (int sigNum){
-
-
     string sigName[]={"INVALID", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGPOLL", "SIGPWR", "SIGSYS", ""};
 
     return (sigName[sigNum]);
-
 }
 
 
@@ -551,26 +542,21 @@ jobs* findJobByPid (pid_t pid){
         return (NULL);
     else
         return (&(*it));
-
 }
 
 
-void removeJob(int jobNum){
-     
+void removeJob(int jobNum){     
     int count = 1;
     list<jobs>::iterator it = jobsList.begin();
     while (it != jobsList.end()){
-
         if (count != jobNum) //still haven't reached our element.
             it++;
         //else - if this process dosn't exist - remove it.
         else  {
             jobsList.erase(it); // remove element.
-            return;
+            printf("found job\n");
+            break;            
         }
         count++;
-    }     
-
-
-
+    }   
 }
