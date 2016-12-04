@@ -14,8 +14,8 @@ void signal_handler(int signum)
     if(cur_job.pid!=-1 && waitpid(cur_job.pid,NULL,WNOHANG)==0){
         if(signum == SIGINT)
         {
-            update_curJob("",-1, -1, "");            
             send_signal(cur_job.pid,signum);
+            update_curJob("",-1, -1, "");                
             printf("\n");
             
         }
