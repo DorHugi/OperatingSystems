@@ -47,7 +47,9 @@ jobs* curJob = findJobByPid(pid);
             curJob->suspend();    //print that this process is suspended.
         if ((curJob!=NULL) && (signum == SIGCONT)) //i.e - SIGTSTP - ctrl Z:
             curJob->unsuspend();    //print that this process is suspended.
-        
-        printf("signal: %s was sent to pid %d\n",sigNumToName(signum),(int)pid);
+    char* sig;
+    sig = (char *)alloca(sigNumToName(signum).size() + 1);
+    memcpy(sig, sigNumToName(signum).c_str(), sigNumToName(signum).size() + 1);
+        printf("signal: %s was sent to pid %d\n",sig,(int)pid);
     }    
 }

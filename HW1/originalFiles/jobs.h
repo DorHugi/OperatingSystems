@@ -22,7 +22,7 @@ class jobs {
             startTime = int(time(NULL));   
 
         }
-        jobs():name(""),pid(-1),isSuspended(""),startTime(-1){}
+        jobs():name(""),startTime(-1),pid(-1),isSuspended(""){}
         
         void suspend() {isSuspended = "(Stopped)";}
         void unsuspend() {isSuspended = "";}

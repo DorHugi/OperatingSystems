@@ -8,7 +8,7 @@ using namespace std;
 
 list<string> historyList; 
 list<jobs> jobsList;
-char* delimiters = " \t\n";  
+char delimiters[] = " \t\n";  
 
 //Local functions declarations:
 
@@ -32,7 +32,7 @@ int ExeCmd(char* lineSize, char* cmdString)
 {
 	char* cmd; 
 	char* args[MAX_ARG];
-	char pwd[MAX_LINE_SIZE];
+	//char pwd[MAX_LINE_SIZE];
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
     	cmd = strtok(lineSize, delimiters);
@@ -115,7 +115,7 @@ int ExeCmd(char* lineSize, char* cmdString)
          fg_cmd(args[1]);
      }
      else 
-       fg_cmd("1");
+       fg_cmd((char*)"1");
 		
 	} 
 	/*************************************************/
@@ -196,8 +196,8 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 //**************************************************************************************
 int ExeComp(char* lineSize)
 {
-	char ExtCmd[MAX_LINE_SIZE+2];
-	char *args[MAX_ARG];
+	//char ExtCmd[MAX_LINE_SIZE+2];
+	//char *args[MAX_ARG];
     if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
     {
         //check if this is also a bg command.
@@ -253,7 +253,7 @@ int BgCmd(char* lineSize)
 {
 
 
-	char* delimiters = " \t\n";
+	char delimiters[] = " \t\n";
 
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{
@@ -555,7 +555,7 @@ void removeJob(int jobNum){
         else  {
             jobsList.erase(it); // remove element.
             printf("found job\n");
-            break;            
+            return;            
         }
         count++;
     }   
