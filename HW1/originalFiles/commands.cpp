@@ -424,10 +424,11 @@ void kill_cmd(int signal, int jobNum){
 jobs* findJob(int jobNum){
     int count = 1;
     for (list<jobs>::iterator it = jobsList.begin() ; it != jobsList.end() ; it++){
+        printf("findJob: count: %d\n",count);
         if (count == jobNum){
-            return (&(*it)); //jobs are sorted.
-            count++;
+            return (&(*it)); //jobs are sorted.            
         }
+        count++;
     }
     return(NULL); //job wasn't found
 }
@@ -472,6 +473,7 @@ void fg_cmd(char* ser)
 	else
 	{   
      update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);
+     //removeJob(serInt);     
      waitpid(findJob(serInt)->pid, &state, WUNTRACED);
 	}
 }
@@ -537,7 +539,7 @@ jobs* findJobByPid (pid_t pid){
     list<jobs>::iterator it = jobsList.begin();
     while ((it!= jobsList.end()) && (it->pid != pid))
         it++;
-    if (it == jobsList.end()) //pid wasn't found.
+    if (it == jobsList.end() && it->pid!=pid) //pid wasn't found.
         return (NULL);
     else
         return (&(*it));
