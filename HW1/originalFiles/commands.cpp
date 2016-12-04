@@ -466,7 +466,8 @@ void fg_cmd(char* ser)
 {
    int state;
 	 removeFinishedJobs();
-   printf("%s\n",ser);
+    cout << "Got to fg_cmd " << endl;
+    cout << "The current jobNum is: " << ser << endl;
    const char* constSer=(const char*)ser;
    int serInt=atoi(constSer);
   if (findJob(serInt)==NULL)
@@ -476,8 +477,12 @@ void fg_cmd(char* ser)
 	else
 	{   
      update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);
-     //removeJob(serInt);     
+     
+     cout << "curJob was updated. Removing it from the jobsList" << endl;
+     removeJob(serInt);     
+     int tempStart = time(NULL); 
      waitpid(findJob(serInt)->pid, &state, WUNTRACED);
+     cout << "Time that process had spent in fg is: " << int(time(NULL)-tempStart) << endl;
 	}
 }
 
