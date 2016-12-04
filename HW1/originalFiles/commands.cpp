@@ -16,6 +16,9 @@ void updateHistoryList(char* cmdString);
 void removeFinishedJobs(); 
 jobs* findJob(int jobNum);
 static char prev_dir[MAX_LINE_SIZE];
+void removeJob(int jobNum);
+
+
 
 string sigNumToName (int sigNum);
 
@@ -546,3 +549,23 @@ jobs* findJobByPid (pid_t pid){
 
 }
 
+
+void removeJob(int jobNum){
+     
+    int count = 1;
+    list<jobs>::iterator it = jobsList.begin();
+    while (it != jobsList.end()){
+
+        if (count != jobNum) //still haven't reached our element.
+            it++;
+        //else - if this process dosn't exist - remove it.
+        else  {
+            jobsList.erase(it); // remove element.
+            return;
+        }
+        count++;
+    }     
+
+
+
+}
