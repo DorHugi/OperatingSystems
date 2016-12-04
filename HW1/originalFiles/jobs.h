@@ -2,6 +2,7 @@
 #define _JOBS
 using namespace std;
 #include <string>
+void removeFinishedJobs(); 
 void send_signal(pid_t pid, int signum);
 void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
 

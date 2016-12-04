@@ -13,7 +13,7 @@ char delimiters[] = " \t\n";
 //Local functions declarations:
 
 void updateHistoryList(char* cmdString); 
-void removeFinishedJobs(); 
+
 jobs* findJob(int jobNum);
 static char prev_dir[MAX_LINE_SIZE];
 void removeJob(int jobNum);
@@ -132,7 +132,10 @@ int ExeCmd(char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-   		quit_cmd();
+   		if(num_arg>0&&(!strcmp(args[1],"kill")))
+       quit_kill_cmd();
+      else 
+        quit_cmd();   
 	} 
 	/*************************************************/
 	else // external command
@@ -541,4 +544,19 @@ void removeJob(int jobNum){
         }
         count++;
     }   
+}
+
+
+void quit_kill_cmd()
+{
+    list<jobs>::iterator it = jobsList.begin();
+    while ((it!= jobsList.end())){
+        send_signal(it->pid,SIGTERM);
+        if(waitpid(it->pid,NULL,WNOHANG)==0){
+            send_signal(it->pid,SIGKILL);
+        }
+        it++;  
+        removeJob(1);              
+    }
+    quit_cmd();    
 }

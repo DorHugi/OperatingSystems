@@ -50,4 +50,5 @@ jobs* curJob = findJobByPid(pid);
     memcpy(sig, sigNumToName(signum).c_str(), sigNumToName(signum).size() + 1);
         printf("signal: %s was sent to pid %d\n",sig,(int)pid);
     }    
+    removeFinishedJobs();
 }
