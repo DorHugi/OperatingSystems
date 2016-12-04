@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     struct sigaction act;
     act.sa_handler = &signal_handler;
     sigaction(SIGINT, &act, NULL);
+	  sigaction(SIGTSTP, &act, NULL);
 	
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
