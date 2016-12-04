@@ -9,8 +9,6 @@
 extern jobs cur_job;
 void signal_handler(int signum)
 {
-    int status = waitpid(cur_job.pid,NULL,WNOHANG);
-    printf("DEBUG got to sighandler. signum is: %d. Wait pid returned: %d",signum,status);
     if(cur_job.pid!=-1 && waitpid(cur_job.pid,NULL,WNOHANG)==0){
         if(signum == SIGINT)
         {
@@ -39,7 +37,7 @@ jobs* curJob = findJobByPid(pid);
     int rc = kill(pid, signum);
     if(rc!=0)
     {
-      printf("tried to senf signal anf failed\n");
+      printf("tried to send signal and failed\n");
     }
     else
     {

@@ -98,7 +98,6 @@ int ExeCmd(char* lineSize, char* cmdString)
 
         string sigString(args[1]);
         int signal = atoi(sigString.erase(0,1).c_str()); //Delete - sign. 
-        cout << "signal is : " << signal << endl;
         int jobNum = atoi(args[2]);
         cout << "jobNum is: " << jobNum << endl;
         kill_cmd(signal,jobNum);    		
@@ -165,7 +164,6 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
     }
 
     else if (pid){ //father. Add to jobs list.
-        cout << "cmdString is " << cmdString << endl;
         int state;
         // update that this job is currentlly running.
         string cmdToString(cmdString);
@@ -226,17 +224,8 @@ int ExeComp(char* lineSize)
         }
 
         else { //son
-            cout << "about to do exec. My pid is: " << getpid() << endl;
-            cout << "line size is: " << lineSize << endl;
             setpgrp();
-            cout << "my id after chgrp is :" << getpid() << endl;
             execl("/bin/bash", "/bin/bash","-c",lineSize,NULL);
-            //char* argsArr[] = {"csh","-f","-c",lineSize,NULL}; 
-            //execvp(*argsArr,argsArr);
-
-
-            cout << "I have continued after exec! my pid is: " << getpid() << endl;
-            cout << "errno is: " << strerror(errno) << endl;
             exit(1);
 
             }
@@ -393,7 +382,6 @@ void removeFinishedJobs(){
         //process g.
         //if (!kill(it->pid, 0))
 
-        cout << "wait pid on" << it -> pid << " is: " << waitpid(it->pid, NULL,WNOHANG) << endl;
         if (!waitpid(it->pid, NULL,WNOHANG))
             it++;
         //else - if this process dosn't exist - remove it.
@@ -465,8 +453,6 @@ void fg_cmd(char* ser)
 {
    int state;
 	 removeFinishedJobs();
-    cout << "Got to fg_cmd " << endl;
-    cout << "The current jobNum is: " << ser << endl;
    const char* constSer=(const char*)ser;
    int serInt=atoi(constSer);
   if (findJob(serInt)==NULL)
@@ -476,13 +462,10 @@ void fg_cmd(char* ser)
 	else
 	{   pid_t pid = findJob(serInt)->pid;
      update_curJob(findJob(serInt)->name,findJob(serInt)->startTime, findJob(serInt)->pid, findJob(serInt)->isSuspended);     
-     cout << "curJob was updated. Removing it from the jobsList" << endl;
      removeJob(serInt);     
-     printf("finished removing\n");
      send_signal(pid,18);
      waitpid(pid, &state, WUNTRACED);
-     printf("finished pid\n");     
-	}
+   }
 }
 
 void quit_cmd()
@@ -554,7 +537,6 @@ void removeJob(int jobNum){
         //else - if this process dosn't exist - remove it.
         else  {
             jobsList.erase(it); // remove element.
-            printf("found job\n");
             return;            
         }
         count++;
