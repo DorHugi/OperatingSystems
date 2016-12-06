@@ -227,7 +227,7 @@ int ExeComp(char* lineSize)
         }
 
         else { //son
-            setpgrp();
+            //setpgrp();
             execl("/bin/bash", "/bin/bash","-c",lineSize,NULL);
             exit(1);
 
@@ -553,7 +553,10 @@ void quit_kill_cmd()
     while ((it!= jobsList.end())){
         send_signal(it->pid,SIGTERM);
         if(waitpid(it->pid,NULL,WNOHANG)==0){
-            send_signal(it->pid,SIGKILL);
+            sleep(5); //wait for 5 seconds.
+            if (waitpid(it->pid,NULL,WNOHANG)==0){ //if process is still allive after 5 seocnds..
+                send_signal(it->pid,SIGKILL);
+            }
         }
         it++;  
         removeJob(1);              
