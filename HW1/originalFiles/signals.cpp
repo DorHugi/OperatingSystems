@@ -30,7 +30,7 @@ void signal_handler(int signum)
     
 }
 
-void send_signal(pid_t pid, int signum)
+bool send_signal(pid_t pid, int signum)
 {
 jobs* curJob = findJobByPid(pid);
     
@@ -38,6 +38,7 @@ jobs* curJob = findJobByPid(pid);
     if(rc!=0)
     {
       printf("tried to send signal and failed\n");
+      return (false);
     }
     else
     {
@@ -51,4 +52,5 @@ jobs* curJob = findJobByPid(pid);
         printf("signal: %s was sent to pid %d\n",sig,(int)pid);
     }    
     removeFinishedJobs();
+    return (true);
 }

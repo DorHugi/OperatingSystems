@@ -33,13 +33,13 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString);
 void showpid_cmd();    		
 
 //My functions:
-void bg_cmd(int jobNum);
+bool bg_cmd(int jobNum);
 void pwd_cmd();
 void history_cmd();
 void jobs_cmd(); 		
 bool cd_cmd(const char* path);
 void kill_cmd(int signal, int jobNum);
-void fg_cmd(char* ser);
+bool fg_cmd(char* ser);
 void quit_cmd();
 void quit_kill_cmd();
 

@@ -3,7 +3,7 @@
 using namespace std;
 #include <string>
 void removeFinishedJobs(); 
-void send_signal(pid_t pid, int signum);
+bool send_signal(pid_t pid, int signum);
 void update_curJob(string name,int startTime, pid_t pid, string isSuspended);
 
 void updateJobsList(string name, pid_t pid);

@@ -60,7 +60,7 @@ int ExeCmd(char* lineSize, char* cmdString)
 		}
 		else
 		{
-			printf("wrong number of parameters\n");
+			;
 		}
 	} 
 	
@@ -99,7 +99,6 @@ int ExeCmd(char* lineSize, char* cmdString)
         string sigString(args[1]);
         int signal = atoi(sigString.erase(0,1).c_str()); //Delete - sign. 
         int jobNum = atoi(args[2]);
-        cout << "jobNum is: " << jobNum << endl;
         kill_cmd(signal,jobNum);    		
 	}
 	/*************************************************/
@@ -111,10 +110,10 @@ int ExeCmd(char* lineSize, char* cmdString)
      }
      else if(num_arg==1)
      {
-         fg_cmd(args[1]);
+        illegal_cmd= fg_cmd(args[1]);
      }
      else 
-       fg_cmd((char*)"1");
+        illegal_cmd= fg_cmd((char*)"1");
 		
 	} 
 	/*************************************************/
@@ -127,7 +126,7 @@ int ExeCmd(char* lineSize, char* cmdString)
             jobNum = -1; //-1 indicates no job was given.
 
 
-        bg_cmd(jobNum);  		
+        illegal_cmd =bg_cmd(jobNum);  		
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
@@ -158,7 +157,6 @@ int ExeCmd(char* lineSize, char* cmdString)
 //**************************************************************************************
 void ExeExternal(char *args[MAX_ARG], char* cmdString)
 {
-    cout << "Got to external command" << endl;
     pid_t pid = fork();
 
     if (pid == -1) {
@@ -205,7 +203,6 @@ int ExeComp(char* lineSize)
         bool bg = false;
         if (lineSize[strlen(lineSize)-2] == '&')
             bg = true;
-
         pid_t pid = fork();
 
         if (pid == -1) {
@@ -407,7 +404,9 @@ void kill_cmd(int signal, int jobNum){
         return;
     }
     //cout << "pid of the killed process is : " << curJob->pid << endl;
-    send_signal(curJob->pid,signal); //returns non zero if failed:        
+    if (!send_signal(curJob->pid,signal)) //returns false if failed:        
+
+        cout << "smash error:> kill " << jobNum << " - cannot send signal" << endl;
     
     return;
 }
@@ -452,7 +451,7 @@ bool cd_cmd(const char* path)
 	}
 }
 
-void fg_cmd(char* ser)
+bool fg_cmd(char* ser)
 {
    int state;
 	 removeFinishedJobs();
@@ -461,6 +460,7 @@ void fg_cmd(char* ser)
   if (findJob(serInt)==NULL)
 	{
 		printf("Error: No such job\n");
+        return (true);
 	}
 	else
 	{   pid_t pid = findJob(serInt)->pid;
@@ -469,6 +469,7 @@ void fg_cmd(char* ser)
      send_signal(pid,18);
      waitpid(pid, &state, WUNTRACED);
    }
+    return(false);
 }
 
 void quit_cmd()
@@ -485,7 +486,7 @@ void update_curJob(string name,int startTime, pid_t pid, string isSuspended)
 }
 
 
-void bg_cmd(int jobNum){
+bool bg_cmd(int jobNum){
 
     jobs* curJob;
     // jobNum = -1 means no job num argument was given. 
@@ -502,14 +503,14 @@ void bg_cmd(int jobNum){
         curJob = findJob(jobNum); 
 
    if (!curJob){ // job was not found.
-        cerr << "job number: " << jobNum  << "wasn't found. bg failed" << endl;
-        return;
+        return(true);
    }    
 
     //job was found.
 
     send_signal(curJob->pid,18); //Send sigcont
     curJob->unsuspend();
+    return(false);
 }
 
 string sigNumToName (int sigNum){
@@ -563,3 +564,5 @@ void quit_kill_cmd()
     }
     quit_cmd();    
 }
+
+
