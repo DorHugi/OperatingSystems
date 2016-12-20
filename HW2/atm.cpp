@@ -6,6 +6,7 @@
 
 using namespace std;
 
+//Private functions
 
 int readFileToVec(vector<string> &linesVec, string strFile);
 
@@ -15,16 +16,26 @@ void* createAtm(void* fileName){ //file name is actually char*
 
     string strFile((char*)(fileName));
     atm curAtm(strFile);
-    cout << "Yay! it's a new thread!. The file I need to read is " << strFile << endl;
 
     vector<string> linesVec;
     readFileToVec(linesVec,strFile);
     //Now we have a new vecor of lines!
+    
+    //Now, iterate through lines of instructions, and perform each inst.    
+    for (int i = 0; i< linesVec.size();i++){
+        string line = linesVec[i];
+        
+
+
+    }
+
+
 
 
     return NULL;
 
 }
+
 
 
 int readFileToVec(vector<string> &linesVec, string strFile){
