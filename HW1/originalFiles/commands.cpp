@@ -21,7 +21,6 @@ void removeJob(int jobNum);
 
 
 string sigNumToName (int sigNum);
-
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
@@ -35,8 +34,8 @@ int ExeCmd(char* lineSize, char* cmdString)
 	//char pwd[MAX_LINE_SIZE];
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
-    	cmd = strtok(lineSize, delimiters);
-	if (cmd == NULL)
+	cmd = strtok(lineSize, delimiters);
+  	if (cmd == NULL)
 		return 0; 
    	args[0] = cmd;
     updateHistoryList(cmdString);
