@@ -1,14 +1,14 @@
 # Makefile for the bank program
 CC = g++
-CPPFLAGS = -g -Wall 
+CPPFLAGS = -pthread -g -Wall
 CCLINK = $(CC)
-OBJS = bank.o 
+OBJS = bank.o atm.o
 RM = rm -f
 # Creating the  executable
 bank: $(OBJS)
-	$(CCLINK) -o bank $(OBJS)
+	$(CCLINK) -pthread -o bank $(OBJS)
 # Creating the object files
-bank.o: bank.cpp 
+bank.o: bank.cpp atm.h
 atm.o: atm.cpp atm.h
 # Cleaning old files before new make
 clean:

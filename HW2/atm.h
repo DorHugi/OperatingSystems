@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string>
 #include <pthread.h>
-
+#include <unistd.h>
+#include <vector>
+#include <fstream>
 class atm {
 
     public:
@@ -14,7 +16,7 @@ class atm {
 
 };
 
-int createAtm(void*); //This function creates and runs a new atm
+void* createAtm(void*); //This function creates and runs a new atm
                       // from void* (this is usefull for the pthread_create
                       // function.
 
