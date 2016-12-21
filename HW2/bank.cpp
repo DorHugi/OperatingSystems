@@ -24,7 +24,8 @@ int main(int argc, char* argv[]){
         char* curInputFile = argv[i+2]; //first and second arguments in
                                           // argv aren't input files.
 
-        int err = pthread_create(&atmThreads[curAtm],NULL,createAtm,(void*)(curInputFile));
+        int err = pthread_create(&atmThreads[curAtm],NULL,createAtm,
+                                 (void*)(curInputFile));
 
        if (err){
 

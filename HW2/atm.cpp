@@ -9,7 +9,8 @@ using namespace std;
 //Private functions
 
 int readFileToVec(vector<string> &linesVec, string strFile);
-
+vector<string> parseLine (string line);
+    
 
 
 void* createAtm(void* fileName){ //file name is actually char*
@@ -24,11 +25,44 @@ void* createAtm(void* fileName){ //file name is actually char*
     //Now, iterate through lines of instructions, and perform each inst.    
     for (int i = 0; i< linesVec.size();i++){
         string line = linesVec[i];
+        //Parse string: 
         
+        vector<string> parsedLine = parseLine(line); //Now parsedLine contains the parsed line.
+        //parseLine contains logic that checks thaat there are at least two arguements.
+        
+        string cmd = parsedLine[0];
+        if (cmd == "O"){
+            cout << "Line is: " << line << "command is: O " << endl;
+        }
+        else if (cmd == "L"){ 
+            cout << "else" << endl;
+        }
+
+        else if (cmd == "U"){ 
+            cout << "else" << endl;
+        }
+        else if (cmd == "D"){ 
+            cout << "else" << endl;
+        }
+        else if (cmd == "W"){ 
+            cout << "else" << endl;
+        }
+
+        else if (cmd == "B"){ 
+            cout << "else" << endl;
+        }
+
+        else if (cmd == "T"){ 
+            cout << "else" << endl;
+        }
+        else {
+
+        cout << "Unrecognized ATM command: " << cmd << " line is: " << line << endl;
+        }
 
 
-    }
 
+        }
 
 
 
@@ -61,4 +95,26 @@ int readFileToVec(vector<string> &linesVec, string strFile){
 
 
     return 1;
+}
+
+
+
+vector<string> parseLine (string line){
+      
+    vector<string> splited;
+
+    stringstream ss(line);
+    string item;
+    char delim =' ';
+
+    while (getline(ss,item,delim))
+        splited.push_back(item); //parse line.
+
+    if (splited.size() < 2){
+        cout << "parsing eror on line " << line << "exiting" << endl;
+        exit(1);
+    }
+
+
+    return splited;    
 }

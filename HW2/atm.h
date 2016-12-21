@@ -6,6 +6,11 @@
 #include <unistd.h>
 #include <vector>
 #include <fstream>
+#include <iterator>
+#include <algorithm>
+#include <sstream>
+
+
 class atm {
 
     public:
