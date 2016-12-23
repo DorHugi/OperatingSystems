@@ -16,9 +16,6 @@ int main(int argc, char* argv[]){
     //Program arguements: bank <number of ATMs> <ATM1 input file> <ATM 2 > ..
 
     
-    for (int i = 0; i < argc ; i++) {
-        printf("The value of arg %d is %s \n",i,argv[i]);
-    }
 
     // get the number of atms:
     int atmNum = atoi(argv[1]);
@@ -32,15 +29,15 @@ int main(int argc, char* argv[]){
     char tempAtmNum[100];
 
     for (int i=0;i< atmNum;i++){
-        int curAtm = i;
+        int curAtm = i+1; //atm numbers starts from 1
         char* curFile = argv[i+2]; //first and second arguments in
                                           // argv aren't input files.
-        sprintf(tempAtmNum,"%d",i); //Apperantely this is the
+        sprintf(tempAtmNum,"%d",curAtm); //Apperantely this is the
         //way to change from int to char* in C :( 
         atmArgs[0] = curFile;
         atmArgs[1] = tempAtmNum; 
 
-        int err = pthread_create(&atmThreads[curAtm],NULL,createAtm,
+        int err = pthread_create(&atmThreads[i],NULL,createAtm,
                                  (void*)(atmArgs));
 
        if (err){

@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <sstream>
 #include <string.h>
-
+#define ERROR -2 
 
 
 //Global variables/mutexes.
@@ -37,13 +37,38 @@ class account{
 
         
     public:
-        account(int _balance,int _number,int _pass) :balance(_balance),
-                number(_number),pass(_pass),isLocked(false) {}; //c'tor
-         
+        
+        //Variabels: 
+
         int balance;
         int number;
         int pass;
         bool isLocked;
+        pthread_mutex_t readersLock; 
+        pthread_mutex_t writersLock;  
+        int readersCount;
+        //Methods:
+        account(int _balance,int _number,int _pass) :balance(_balance),
+                number(_number),pass(_pass),isLocked(false),readersCount(0) {
+            pthread_mutex_init(&readersLock,NULL);         
+            pthread_mutex_init(&writersLock,NULL);         
+                
+        }; //c'tor
+        
+        
+        //readersWriters functions:
+        
+        void enterRead();
+        void leaveRead();
+        void enterWrite();
+        void leaveWrite();
+
+        bool lock (int pass);
+        bool unlock (int pass);
+        bool deposit (int pass,int amount,int atmNum);
+        
+
+
 };
 
 class accounts{ //This is a singleton!
@@ -57,10 +82,19 @@ class accounts{ //This is a singleton!
             
     }; //c'tor
 
-    bool accountExists(int accountNum);  //Check if account exists.
+    int findAccount(int accountNum);  //Check if account exists.
+    //This function assumes that you already set the read/write permissons.
+    //if account was found it returns its index, and if not it returns NOT_FOUND
     bool createAccount(int accountNum, int pass,
-            int initialAmount,int atmNum); //Returns true on success.
-
+    int initialAmount,int atmNum); //Returns true on success.
+    //Readers writers functions
+    void enterRead();
+    void leaveRead();
+    void enterWrite();
+    void leaveWrite();
+    void lockAccount (int accountNum, int pass,int atmNum);
+    void unlockAccount (int accountNum, int pass,int atmNum);
+    void depositAccount(int accountNum,int pass,int atmNum, int amount);
 
     //Variables:
     
@@ -73,7 +107,7 @@ class accounts{ //This is a singleton!
     int readersCount;
     pthread_mutex_t readersLock; 
     pthread_mutex_t writersLock;  
-
+    
 
 
 };
@@ -89,14 +123,14 @@ class logger{
     
         logger(std::string _name):name(_name){ //c'tor
             
-        //if (access (name.c_str(),F_OK) != -1 ){ //check that file exists.
-            //std::cerr << "Error. Couldn't find logfile " << name 
-                      //<< "exiting." << std::endl;
-            //exit(-1);
+            pthread_mutex_init(&writeLock,NULL); //init mutex.
 
-        //}
-        
-        pthread_mutex_init(&writeLock,NULL); //init mutex.
+            std::ofstream fh; 
+            
+            fh.open(name.c_str()); //Wipe the file.
+            fh.close(); 
+
+
         }
 
         void writeLog(std::string line); 

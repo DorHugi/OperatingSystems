@@ -3,8 +3,9 @@
 
 //I'll arrage the header later.
 #include "atm.h"
- 
 #include <typeinfo>
+
+#define NOT_FOUND -1
 using namespace std;
 
 
@@ -45,30 +46,33 @@ void* createAtm(void* atmArgs){ //file name is actually char*
         string cmd = parsedLine[0];
 
 
-
         if (cmd == "O"){
             
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             int initial = strToInt(parsedLine[3]);
 
-            if (accountsData.createAccount(accountNum,
-                        pass,initial,atmNum)) //success
-                cout << "Success" << endl;
-            else
-                cout << "Failed" << endl;
-
+            accountsData.createAccount(accountNum,pass,initial,atmNum); //success
 
         }
         else if (cmd == "L"){ 
-            cout << "else" << endl;
+            
+            int accountNum = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            accountsData.lockAccount(accountNum,pass,atmNum);
         }
 
+
         else if (cmd == "U"){ 
-            cout << "else" << endl;
+            int accountNum = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            accountsData.unlockAccount(accountNum,pass,atmNum);
         }
         else if (cmd == "D"){ 
-            cout << "else" << endl;
+            int accountNum = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            int amount = strToInt(parsedLine[3]);
+            accountsData.depositAccount(accountNum,pass,atmNum,amount);
         }
         else if (cmd == "W"){ 
             cout << "else" << endl;
@@ -103,10 +107,7 @@ int readFileToVec(vector<string> &linesVec, string strFile){
     //Now read file line by line. 
     //First - check that file exists.
     
-    if (access (strFile.c_str(),F_OK) != -1 ){ //c_str returns char*
-       cout << "File " << strFile << " exists" << endl; 
-    }
-    else {
+    if (access (strFile.c_str(),F_OK) == -1 ){ //c_str returns char*
        cout << "File " << strFile << " doesn't exists" << endl; 
        exit(1);
     }
@@ -147,48 +148,69 @@ vector<string> parseLine (string line){
 
 //Class methods implementation:
 
-bool accounts::accountExists(int accountNum){  //Check if account exists.
+int accounts::findAccount(int accountNum){  //Check if account exists.
 
-    //readers writers:
-    bool exist = false;
+    //Function assumes that it has read permissions. i.e - enterread was set before.
+    
+    cout << "i've entered find account func, account num is " << accountNum << endl;
+
+    for (int i=0; i < accountsVec.size(); i++) {
+        if (accountsVec[i].number == accountNum){
+            cout << "i is: " << i << "curAccount number is: " << accountsVec[i].number << endl;
+            return(i); //return matching account
+        }
+    }
+
+
+    return(NOT_FOUND);
+} 
+
+//Accounts data:
+
+void accounts::enterRead(){
     pthread_mutex_lock(&readersLock);
     if (readersCount == 0)
         pthread_mutex_lock(&writersLock);
     readersCount++;
     pthread_mutex_unlock(&readersLock);
-    
-    //Do some reading. Check if accountNum exists already.
-    
-    for (int i=0; i < accountsVec.size(); i++) {
-        if (accountsVec[i].number == accountNum){
-            exist = true;
-            break;
-        }
-        }
-    //After reading - free mutexes.
+}
+
+void accounts::leaveRead(){
 
     pthread_mutex_lock(&readersLock);
     if (readersCount == 1) //You're the last one!
         pthread_mutex_unlock(&writersLock);
     readersCount--;
     pthread_mutex_unlock(&readersLock);
+}
 
-    return exist;
-} 
 
+void accounts::enterWrite(){
+
+    pthread_mutex_lock(&writersLock);
+}
+
+
+void accounts::leaveWrite(){
+    pthread_mutex_unlock(&writersLock);
+
+
+}
 
 
 
 bool accounts::createAccount(int accountNum, int pass, int initialAmount,int atmNum){ //Returns true on success.
 
     stringstream line;
-    if (this->accountExists(accountNum)){
+    enterWrite();
+    int accountIdx =findAccount(accountNum);
+    if (accountIdx !=NOT_FOUND){ //wasn't found
+        line << "Error " << atmNum << ": Your transcation failed - account with\
+            the same id exists" << endl;
+        logFile.writeLog(line.str());
         return false; //Can't write, accounts exists already.
     }
-    
-    //else - readers-writers.
 
-    pthread_mutex_lock(&writersLock);
     //Critical part: Add new elem while keeping vec sorted.
     //Find matching place:  
     int i=0 ; //i is the place to insert.
@@ -199,14 +221,14 @@ bool accounts::createAccount(int accountNum, int pass, int initialAmount,int atm
         while (i < accountsVec.size() && i < accountsVec[i].number)    
             i++;
     }
+
     //insert the place i 
 
     account temp(initialAmount,accountNum,pass);
     accountsVec.insert(accountsVec.begin()+ i,temp); 
 
 
-    //Exit critical part, release mutex.
-    pthread_mutex_unlock(&writersLock);
+    leaveWrite();//Exit critical part
 
     //Create log line string.
     line << atmNum << ": New account id is " << accountNum << " with password " <<
@@ -227,14 +249,174 @@ int strToInt(string str){
 
 
 void logger::writeLog(string line){
+
     ofstream fh;  //file handler
 
     pthread_mutex_lock(&writeLock);
-    fh.open(name.c_str()); //logger name
+
+    fh.open(name.c_str(),ios::app); //logger name
     fh << line;
     fh.close(); 
     
+    pthread_mutex_unlock(&writeLock);
 }
+
+
+bool account::lock(int _pass){
+       
+    //since the password can't change, there is no need of doing read write
+    //before checking it.
+    
+    
+    if (_pass != pass){
+        return false;
+    } 
+
+    //else:
+    enterWrite();
+    isLocked = true;
+    leaveWrite();
+    return true;
+}
+
+bool account::unlock(int _pass){
+       
+    //since the password can't change, there is no need of doing read write
+    //before checking it.
+    
+
+    if (_pass != pass){
+        return false;
+    } 
+
+    //else:
+    enterWrite();
+    isLocked = false;
+    leaveWrite();
+    return true;
+}
+
+void accounts::lockAccount (int accountNum, int pass,int atmNum){
+
+    int accountIdx = findAccount(accountNum);  
+    stringstream line;
+    
+    if (accountIdx == NOT_FOUND){
+        cout << "ERR: you've asked me to lock account " 
+             << accountNum << "but I can't find it" << endl;
+        return;
+    }
+    
+    //try to lock account.
+    if (!accountsVec[accountIdx].lock(pass) ){ //wrong password.
+        line << "ERROR: " << atmNum <<": Your transcation failed - password for account id" << accountNum << " is incorrect" << endl; 
+        logFile.writeLog(line.str());
+
+    }
+
+
+}
+
+
+void accounts::unlockAccount (int accountNum, int pass,int atmNum){
+
+    int accountIdx = findAccount(accountNum);  
+    stringstream line;
+    
+    if (accountIdx == NOT_FOUND){
+        cout << "ERR: you've asked me to unlock account " 
+             << accountNum << "but I can't find it" << endl;
+        return;
+    }
+    
+    //try to lock account.
+
+    if (!accountsVec[accountIdx].unlock(pass) ){ //wrong password.
+        line << "ERROR: " << atmNum <<": Your transcation failed - password for account id" << accountNum << " is incorrect" << endl; 
+        logFile.writeLog(line.str());
+
+    }
+
+
+}
+
+bool account::deposit (int _pass,int amount,int atmNum){
+    stringstream line;
+    int tempBalance;
+    if (_pass != pass){
+            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id" << number  << " is incorrect" << endl; 
+            logFile.writeLog(line.str());
+        return false;
+    }
+    
+    enterWrite();
+    balance+=amount;
+    tempBalance = balance;
+    leaveWrite();
+
+    line << atmNum << ": Account " << number << " new balance is " << tempBalance << " after " << amount << " was deposited" << endl;
+    logFile.writeLog(line.str());
+    return true;
+
+}
+
+
+void accounts::depositAccount(int accountNum,int pass,int atmNum, int amount){
+
+    
+    int accountIdx = findAccount(accountNum);
+    
+
+    if (accountIdx == NOT_FOUND){
+        cout << "ERR: you've asked me to unlock account " 
+             << accountNum << "but I can't find it" << endl;
+        return;
+    }
+
+    accountsVec[accountIdx].deposit(pass,amount,atmNum);
+
+}
+
+
+
+void account::enterRead(){
+    pthread_mutex_lock(&readersLock);
+    if (readersCount == 0)
+        pthread_mutex_lock(&writersLock);
+    readersCount++;
+    pthread_mutex_unlock(&readersLock);
+}
+
+void account::leaveRead(){
+
+    pthread_mutex_lock(&readersLock);
+    if (readersCount == 1) //You're the last one!
+        pthread_mutex_unlock(&writersLock);
+    readersCount--;
+    pthread_mutex_unlock(&readersLock);
+}
+
+
+void account::enterWrite(){
+
+    pthread_mutex_lock(&writersLock);
+}
+
+
+void account::leaveWrite(){
+    pthread_mutex_unlock(&writersLock);
+
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
