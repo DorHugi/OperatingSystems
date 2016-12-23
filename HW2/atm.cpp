@@ -75,7 +75,10 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             accountsData.depositAccount(accountNum,pass,atmNum,amount);
         }
         else if (cmd == "W"){ 
-            cout << "else" << endl;
+            int accountNum = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            int amount = strToInt(parsedLine[3]);
+            accountsData.withdrawAccount(accountNum,pass,atmNum,amount);
         }
 
         else if (cmd == "B"){ 
@@ -92,10 +95,10 @@ void* createAtm(void* atmArgs){ //file name is actually char*
 
 
 
-        }
+    }
 
 
-
+    pthread_exit(NULL);
     return NULL;
 
 }
@@ -149,14 +152,13 @@ vector<string> parseLine (string line){
 //Class methods implementation:
 
 int accounts::findAccount(int accountNum){  //Check if account exists.
+    
 
     //Function assumes that it has read permissions. i.e - enterread was set before.
     
-    cout << "i've entered find account func, account num is " << accountNum << endl;
 
     for (int i=0; i < accountsVec.size(); i++) {
         if (accountsVec[i].number == accountNum){
-            cout << "i is: " << i << "curAccount number is: " << accountsVec[i].number << endl;
             return(i); //return matching account
         }
     }
@@ -329,7 +331,7 @@ void accounts::unlockAccount (int accountNum, int pass,int atmNum){
         return;
     }
     
-    //try to lock account.
+    //try to unlock account.
 
     if (!accountsVec[accountIdx].unlock(pass) ){ //wrong password.
         line << "ERROR: " << atmNum <<": Your transcation failed - password for account id" << accountNum << " is incorrect" << endl; 
@@ -343,8 +345,8 @@ void accounts::unlockAccount (int accountNum, int pass,int atmNum){
 bool account::deposit (int _pass,int amount,int atmNum){
     stringstream line;
     int tempBalance;
-    if (_pass != pass){
-            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id" << number  << " is incorrect" << endl; 
+    if (_pass != pass || isAccountLocked() ){
+            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id " << number  << " is incorrect" << endl; 
             logFile.writeLog(line.str());
         return false;
     }
@@ -377,6 +379,58 @@ void accounts::depositAccount(int accountNum,int pass,int atmNum, int amount){
 
 }
 
+bool account::isAccountLocked(){
+    enterRead();
+    bool temp;
+    temp = isLocked;
+    leaveRead();
+    return temp;
+}
+bool account::withdraw (int _pass,int amount,int atmNum){
+    stringstream line;
+
+    if (_pass != pass || isAccountLocked() ){
+            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id " << number  << " is incorrect" << endl; 
+            logFile.writeLog(line.str());
+
+        return false;
+    }
+    
+    enterWrite();
+    if (amount > balance){
+            leaveWrite();
+            line << "ERROR: " << atmNum <<": Your transcation failed - account id " << number  << " balance is lower than " << amount << endl; 
+        logFile.writeLog(line.str());
+    return false;
+    }
+
+    else{ //everything is ok.
+        balance-=amount;
+        int tempBalance = balance;
+        leaveWrite();
+        line << atmNum << ": Account " << number << " new balance is " << tempBalance << " after " << amount << " was withdrew" << endl;
+        logFile.writeLog(line.str());
+        return true;
+    }
+
+}
+
+
+void accounts::withdrawAccount(int accountNum,int pass,int atmNum, int amount){
+
+    
+    int accountIdx = findAccount(accountNum);
+    
+
+    if (accountIdx == NOT_FOUND){
+        cout << "ERR: you've asked me to unlock account " 
+             << accountNum << "but I can't find it" << endl;
+        return;
+    }
+
+    accountsVec[accountIdx].withdraw(pass,amount,atmNum);
+
+}
 
 
 void account::enterRead(){
