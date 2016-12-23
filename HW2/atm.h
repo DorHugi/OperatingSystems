@@ -69,6 +69,11 @@ class account{
         bool withdraw (int pass,int amount,int atmNum);
         bool isAccountLocked();
         bool checkBalance(int pass,int atmNum);
+
+        int getBalance();
+
+
+
 };
 
 class accounts{ //This is a singleton!
@@ -99,6 +104,8 @@ class accounts{ //This is a singleton!
     void balanceAccount(int accountNum,int pass,int atmNum);
     void transferFromTo(int atmNum, int from, int to,
             int pass, int amount);
+    
+      
 
     //Variables:
     
