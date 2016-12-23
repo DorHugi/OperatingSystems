@@ -2,10 +2,13 @@
 
 #define MAX_ARG_SIZE 5
 
+using namespace std;
+
+
 //globals
 accounts accountsData; //Create the only instance of accounts
+logger logFile("log.txt");
 
-using namespace std;
 
 int main(int argc, char* argv[]){
 
@@ -30,12 +33,10 @@ int main(int argc, char* argv[]){
 
     for (int i=0;i< atmNum;i++){
         int curAtm = i;
-        //cout << "curAtm before is: " << i << endl;
         char* curFile = argv[i+2]; //first and second arguments in
                                           // argv aren't input files.
         sprintf(tempAtmNum,"%d",i); //Apperantely this is the
         //way to change from int to char* in C :( 
-        //cout << "curAtm after is: " << tempAtmNum << endl;
         atmArgs[0] = curFile;
         atmArgs[1] = tempAtmNum; 
 
@@ -44,7 +45,8 @@ int main(int argc, char* argv[]){
 
        if (err){
 
-           cerr << "ERROR: could not create thread for atm " << curAtm << endl;
+           cerr << "ERROR: could not create thread for atm " 
+                << curAtm << endl;
            exit(1);
 
        } 

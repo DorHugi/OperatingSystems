@@ -4,7 +4,14 @@
 //I'll arrage the header later.
 #include "atm.h"
  
+#include <typeinfo>
 using namespace std;
+
+
+//Globals:
+
+extern logger logFile;
+extern accounts accountsData;
 
 //Private functions
 
@@ -19,14 +26,13 @@ void* createAtm(void* atmArgs){ //file name is actually char*
     char* fileName = ((char**)(atmArgs))[0];
     int atmNum = atoi((((char**)(atmArgs))[1]));
 
-    cout << "filename is: " << fileName << " atm num is: " << atmNum
-        << endl;
     string strFile(fileName);
     atm curAtm(strFile); vector<string> linesVec;
     readFileToVec(linesVec,strFile);
     //Now we have a new vecor of lines!
     
-    //Now, iterate through lines of instructions, and perform each inst.    
+    //Now, iterate through lines of instructions, 
+    //and perform each inst.    
     for (int i = 0; i< linesVec.size();i++){
         string line = linesVec[i];
         //Parse string: 
@@ -47,7 +53,7 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             int initial = strToInt(parsedLine[3]);
 
             if (accountsData.createAccount(accountNum,
-                        pass,initial)) //success
+                        pass,initial,atmNum)) //success
                 cout << "Success" << endl;
             else
                 cout << "Failed" << endl;
@@ -173,10 +179,12 @@ bool accounts::accountExists(int accountNum){  //Check if account exists.
 
 
 
-bool accounts::createAccount(int accountNum, int pass, int initialAmount){ //Returns true on success.
+bool accounts::createAccount(int accountNum, int pass, int initialAmount,int atmNum){ //Returns true on success.
 
-    if (this->accountExists(accountNum))
+    stringstream line;
+    if (this->accountExists(accountNum)){
         return false; //Can't write, accounts exists already.
+    }
     
     //else - readers-writers.
 
@@ -200,6 +208,12 @@ bool accounts::createAccount(int accountNum, int pass, int initialAmount){ //Ret
     //Exit critical part, release mutex.
     pthread_mutex_unlock(&writersLock);
 
+    //Create log line string.
+    line << atmNum << ": New account id is " << accountNum << " with password " <<
+            pass << " and initial balance " << initialAmount << endl;
+    logFile.writeLog(line.str());
+    return true;
+
 }
 
 
@@ -212,7 +226,15 @@ int strToInt(string str){
 
 
 
+void logger::writeLog(string line){
+    ofstream fh;  //file handler
 
+    pthread_mutex_lock(&writeLock);
+    fh.open(name.c_str()); //logger name
+    fh << line;
+    fh.close(); 
+    
+}
 
 
 

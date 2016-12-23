@@ -5,8 +5,8 @@ CCLINK = $(CC)
 OBJS = bank.o atm.o
 RM = rm -f
 # Creating the  executable
-bank: $(OBJS)
-	$(CCLINK) -pthread -o bank $(OBJS)
+bankNew: $(OBJS)
+	$(CCLINK) -pthread -o bankNew $(OBJS)
 # Creating the object files
 bank.o: bank.cpp atm.h
 atm.o: atm.cpp atm.h
