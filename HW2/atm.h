@@ -97,6 +97,8 @@ class accounts{ //This is a singleton!
     void depositAccount(int accountNum,int pass,int atmNum, int amount);
     void withdrawAccount(int accountNum,int pass,int atmNum, int amount);
     void balanceAccount(int accountNum,int pass,int atmNum);
+    void transferFromTo(int atmNum, int from, int to,
+            int pass, int amount);
 
     //Variables:
     

@@ -88,7 +88,12 @@ void* createAtm(void* atmArgs){ //file name is actually char*
         }
 
         else if (cmd == "T"){ 
-            cout << "else" << endl;
+            int from = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            int to = strToInt(parsedLine[3]);
+            int amount = strToInt(parsedLine[4]);
+
+            accountsData.transferFromTo(atmNum,from,to,pass,amount);
         }
         else {
 
@@ -507,6 +512,78 @@ void accounts::balanceAccount(int accountNum,int pass,int atmNum){
     accountsVec[accountIdx].checkBalance(pass,atmNum);
 
 }
+
+
+void accounts::transferFromTo(int atmNum, int from, int to, int pass, int amount){
+    //first- check input: both accounts are found, and password is correct.
+
+    stringstream line; 
+    int fromIdx = findAccount(from);
+    int toIdx = findAccount(to);
+    
+    if (fromIdx == NOT_FOUND || toIdx == NOT_FOUND ){
+        cout << "ERR: you've asked me to make a transfer but I can't find it" <<
+            endl;
+        return;
+    }
+
+    //now - check that password is correct.
+    
+    if (accountsVec[fromIdx].pass != pass){
+
+            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id " << from  << " is incorrect" << endl; 
+            logFile.writeLog(line.str());
+            return;
+
+    }
+
+    //about the enter critical part - lock in a sorted manner,
+    //to prevent deadlock.   
+
+    int min = fromIdx < toIdx? fromIdx :toIdx;
+    int max = fromIdx < toIdx? toIdx : fromIdx;
+   
+    //assign by reference to make life a bit easier. 
+    account &minAccount = accountsVec[min];
+    account &maxAccount = accountsVec[max];
+    account &fromAccount = accountsVec[fromIdx];
+    account &toAccount = accountsVec[toIdx];
+    
+    //lock both accounts for writing.
+    minAccount.enterWrite();
+    maxAccount.enterWrite();
+    //Critical part.
+    if (amount > fromAccount.balance){ //not enough money in account.
+   
+        line << "ERROR: " << atmNum <<": Your transcation failed - " 
+             << "account " << from << " balance is lower than " << amount << endl; 
+    } 
+
+    //IF I WANT TO CHECK THAT BOTH ACCOUNT ARENT LOCKED HERE IS THE PLACE
+
+    else{ // there's enough money.
+        fromAccount.balance-=amount;
+        toAccount.balance+=amount;    
+
+        line << atmNum << ": Transfer " << amount << " from account " << from
+             << " to account " << to << " new account balance is " 
+             << fromAccount.balance << " new target account balance is " 
+             << toAccount.balance << endl;
+    }
+
+    //end of critical part.
+    maxAccount.leaveWrite();
+    minAccount.leaveWrite();
+    
+    //write line to log.
+
+    logFile.writeLog(line.str());
+    return;
+}
+
+
+
+
 
 
 
