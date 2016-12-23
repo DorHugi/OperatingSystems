@@ -82,7 +82,9 @@ void* createAtm(void* atmArgs){ //file name is actually char*
         }
 
         else if (cmd == "B"){ 
-            cout << "else" << endl;
+            int accountNum = strToInt(parsedLine[1]);
+            int pass = strToInt(parsedLine[2]);
+            accountsData.balanceAccount(accountNum,pass,atmNum);
         }
 
         else if (cmd == "T"){ 
@@ -465,11 +467,46 @@ void account::leaveWrite(){
 
 
 
+bool account::checkBalance(int _pass,int atmNum){
+    
+    stringstream line;
+
+    if (_pass != pass ){
+            line << "ERROR: " << atmNum <<": Your transcation failed - password for account id " << number  << " is incorrect" << endl; 
+            logFile.writeLog(line.str());
+
+        return false;
+    }
+
+    //else:
+    enterRead();
+    int tempBalance = balance;
+    leaveRead();
+    line << atmNum <<": Account " << number  << " balance is " 
+        << tempBalance << endl; 
+    logFile.writeLog(line.str());
+
+return false;
+    
+}
 
 
 
+void accounts::balanceAccount(int accountNum,int pass,int atmNum){
 
+    
+    int accountIdx = findAccount(accountNum);
+    
 
+    if (accountIdx == NOT_FOUND){
+        cout << "ERR: you've asked me to check account balance " 
+             << accountNum << "but I can't find it" << endl;
+        return;
+    }
+
+    accountsVec[accountIdx].checkBalance(pass,atmNum);
+
+}
 
 
 

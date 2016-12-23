@@ -68,6 +68,7 @@ class account{
         bool deposit (int pass,int amount,int atmNum);
         bool withdraw (int pass,int amount,int atmNum);
         bool isAccountLocked();
+        bool checkBalance(int pass,int atmNum);
 };
 
 class accounts{ //This is a singleton!
@@ -95,7 +96,8 @@ class accounts{ //This is a singleton!
     void unlockAccount (int accountNum, int pass,int atmNum);
     void depositAccount(int accountNum,int pass,int atmNum, int amount);
     void withdrawAccount(int accountNum,int pass,int atmNum, int amount);
- 
+    void balanceAccount(int accountNum,int pass,int atmNum);
+
     //Variables:
     
     std::vector<account> accountsVec;  //This vector holds the account data.
