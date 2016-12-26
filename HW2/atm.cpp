@@ -23,20 +23,27 @@ int strToInt(string str);
 
 void* createAtm(void* atmArgs){ //file name is actually char*
 
-
+printf("debug print entered createAtm\n");
+	
     char* fileName = ((char**)(atmArgs))[0];
     int atmNum = atoi((((char**)(atmArgs))[1]));
+printf("debug print create atm before str\n");
 
     string strFile(fileName);
+printf("debug print after weird string thing\n");
+
     atm curAtm(strFile); vector<string> linesVec;
     readFileToVec(linesVec,strFile);
     //Now we have a new vecor of lines!
     
     //Now, iterate through lines of instructions, 
     //and perform each inst.    
+printf("debug print create atm before parser loop\n");
+
     for (int i = 0; i< linesVec.size();i++){
         string line = linesVec[i];
         //Parse string: 
+	printf("debug print atm parser new line\n");
         
         vector<string> parsedLine = parseLine(line); //Now parsedLine 
         //contains the parsed line.
@@ -53,6 +60,7 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             int initial = strToInt(parsedLine[3]);
 
             accountsData.createAccount(accountNum,pass,initial,atmNum); //success
+			printf("debug print argument O\n");
 
         }
         else if (cmd == "L"){ 
@@ -60,6 +68,8 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             accountsData.lockAccount(accountNum,pass,atmNum);
+			printf("debug print argument L\n");
+
         }
 
 
@@ -67,24 +77,32 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             accountsData.unlockAccount(accountNum,pass,atmNum);
+			printf("debug print argument U\n");
+
         }
         else if (cmd == "D"){ 
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             int amount = strToInt(parsedLine[3]);
             accountsData.depositAccount(accountNum,pass,atmNum,amount);
+			printf("debug print argument D\n");
+
         }
         else if (cmd == "W"){ 
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             int amount = strToInt(parsedLine[3]);
             accountsData.withdrawAccount(accountNum,pass,atmNum,amount);
+			printf("debug print argument W\n");
+
         }
 
         else if (cmd == "B"){ 
             int accountNum = strToInt(parsedLine[1]);
             int pass = strToInt(parsedLine[2]);
             accountsData.balanceAccount(accountNum,pass,atmNum);
+			printf("debug print argument B\n");
+
         }
 
         else if (cmd == "T"){ 
@@ -94,20 +112,16 @@ void* createAtm(void* atmArgs){ //file name is actually char*
             int amount = strToInt(parsedLine[4]);
 
             accountsData.transferFromTo(atmNum,from,to,pass,amount);
+			printf("debug print argument T\n");
+
         }
         else {
 
         cout << "Unrecognized ATM command: " << cmd << " line is: " << line << endl;
         }
-
-
-
     }
-
-
     pthread_exit(NULL);
     return NULL;
-
 }
 
 
