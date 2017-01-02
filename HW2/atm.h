@@ -18,6 +18,7 @@
 
 //Classes
 
+
 class atm {
 
     public:
@@ -27,19 +28,19 @@ class atm {
         std::string inputFile;
 
 };
+typedef struct atmArg{
+	int num;
+	char file[100];	
+}atmArg;
 
 void* createAtm(void*); //This function creates and runs a new atm
                       // from void* (this is usefull for the pthread_create
                       // function.
 
 
-class account{
-
-        
-    public:
-        
+class account{        
+    public:        
         //Variabels: 
-
         int balance;
         int number;
         int pass;

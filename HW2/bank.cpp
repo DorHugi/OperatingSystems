@@ -14,34 +14,32 @@ bool atmsRunning;
 
 int main(int argc, char* argv[]){
     //Program arguements: bank <number of ATMs> <ATM1 input file> <ATM 2 > ..
-printf("debug print 0\n");
     
     // get the number of atms:
     int atmNum = atoi(argv[1]);
-	printf("debug print 1\n");
     //create a thread for each ATM.
     pthread_t atmThreads[atmNum]; //Threads array.
-    printf("debug print 2\n");
     //For each atm - call a different thread.
-    char* atmArgs[2];
-    char tempAtmNum[100];
+    
+	
+    //char tempAtmNum[100];
 	pthread_t commissions;
 	pthread_t curBankStatus;
-	printf("debug print 3\n");
-	for (int i=0;i< atmNum+1;i++){
-        printf("debug print 5\n");
-
+	atmArg argArray[atmNum];
+	for (int i=0;i< atmNum;i++){
 		int curAtm = i+1; //atm numbers starts from 1
         char* curFile = argv[i+2]; //first and second arguments in
                                           // argv aren't input files.
-        sprintf(tempAtmNum,"%d",curAtm); //Apperantely this is the
-        //way to change from int to char* in C :( 
-        atmArgs[0] = curFile;
-        atmArgs[1] = tempAtmNum; 
+        argArray[i].num=curAtm;
+		strcpy(argArray[i].file,curFile);
+		//way to change from int to char* in C :( 
+		
+        //atmArgs[0] = curFile;
+        //atmArgs[1] = tempAtmNum; 
+		
 
         int err = pthread_create(&atmThreads[i],NULL,createAtm,
-                                 (void*)(atmArgs));
-		printf("debug print 7\n");
+                                 (void*)(&argArray[i]));
 		
        if (err){
 
@@ -51,7 +49,6 @@ printf("debug print 0\n");
        } 
     }//end of for.	
 	atmsRunning=true;
-	printf("debug print atmsRunning=true\n");
 	//	thread takeCommissions(commissions,NULL);
 	int errCom=pthread_create(&commissions,NULL,takeCommissions,NULL);
 	if (errCom){
@@ -59,7 +56,6 @@ printf("debug print 0\n");
            exit(1);
        }
 	commisionsRunning=true;
-	printf("debug print commisionsRunning=true\n");
 	
 	//	thread curBankStatus(commissions,NULL);
 	int errStatus=pthread_create(&curBankStatus,NULL,printStatus,NULL);
@@ -69,34 +65,40 @@ printf("debug print 0\n");
      }	
 	//joining atm threads
     for (int i=0; i<atmNum;i++){
-        cout << "waiting for atmThread: " << i << endl;
         pthread_join(atmThreads[i],NULL);
     }
 	atmsRunning=false;
-	printf("debug print atmsRunning=false\n");
-	
 	pthread_join(commissions,NULL);
     commisionsRunning=false;
-	printf("debug print commisionsRunning=false\n");
-	
 	pthread_join(curBankStatus,NULL);
     return 0;
 }
 
 void* printStatus(void*){
+	string suffToPass;
+	
 	while(commisionsRunning){			
-		printf("debug print entered printStatus\n");
-		usleep(0.5*(10^6));
-		printf("debug print passed usleep in printStatus\n");
-		//printf("\033[2J");
-		printf("debug print passed clean screen print in printStatus\n");
-		//printf("\033[1;1H");
-		printf("debug print passed move left print in printStatus\n");
+		usleep(0.5*(1000000));
+		printf("\033[2J");
+		printf("\033[1;1H");
 		printf("Current Bank Status\n");
-		for(int i=0; i < accountsData.accountsVec.size(); i++){
+		for(unsigned int i=0; i < accountsData.accountsVec.size(); i++){
 			accountsData.accountsVec[i].enterRead();
-			printf("Account %d: Balance - %d $ , Account Password - %d\n",accountsData.accountsVec[i].number,
-			accountsData.accountsVec[i].balance, accountsData.accountsVec[i].pass);
+			
+			if(accountsData.accountsVec[i].pass>999){
+			suffToPass="";
+			}else if(accountsData.accountsVec[i].pass>99){
+			suffToPass="0";
+			}else if(accountsData.accountsVec[i].pass>9){
+			suffToPass="00";
+			}else if(accountsData.accountsVec[i].pass>0){
+			suffToPass="000";
+			}else{
+			suffToPass="0000";
+			}
+			cout <<"Account: "<<accountsData.accountsVec[i].number<<" Balance - "
+			<< accountsData.accountsVec[i].balance<<" $"<<", Account Password - "<<suffToPass
+			<<accountsData.accountsVec[i].pass<<endl;	
 			accountsData.accountsVec[i].leaveRead();			
 		}
 		bank.enterRead();
@@ -107,22 +109,20 @@ void* printStatus(void*){
     return NULL;		
 }
 
+
+
 void* takeCommissions(void*){
 	double tmp;
 	double ammount=0;
 	double commissionRate; 
-	printf("debug print entered take commissions- befor string\n");
 	stringstream log;
 	while(atmsRunning){
-		printf("debug print entered takeCommissions loop\n");
 		fflush(stdout);
 		usleep(3000000);
-		printf("debug print passed usleep in takeCommissions\n");
 		commissionRate=rand() % 100;
 		commissionRate=(commissionRate/100)+3;
 	    tmp=0;
-		for(int i=0; i < accountsData.accountsVec.size(); i++){
-			printf("debug print entered commissions for loop\n");
+		for(unsigned int i=0; i < accountsData.accountsVec.size(); i++){
 			accountsData.accountsVec[i].enterRead();
 			tmp=accountsData.accountsVec[i].balance;
 			accountsData.accountsVec[i].leaveRead();
@@ -133,7 +133,6 @@ void* takeCommissions(void*){
 			bank.enterWrite();
 			bank.money=bank.money+ammount;
 			bank.leaveWrite();
-			printf("debug print commissions before log\n");
 			
 			log<<"Bank: commissions of "<<commissionRate<<" % were charged, the bank gained: "<<ammount<<
 			"$ from account "<<	accountsData.accountsVec[i].number<<endl;
