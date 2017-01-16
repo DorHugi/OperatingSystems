@@ -1,3 +1,6 @@
+#ifndef _PAGE_TABLE
+#define _PAGE_TABLE
+
 //#include “PageDirectoryEntry.h”
 
 class PageTable
@@ -8,3 +11,6 @@ class PageTable
     private:
     //Fill the class with the necessary member variables
 };
+
+
+#endif

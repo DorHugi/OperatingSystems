@@ -1,13 +1,12 @@
 #include <queue>
+#include <unordered_set>
 #include "OurPointer.h"
 #include "PhysMem.h"
-#include <unordered_set>
 #include "PageTable.h"
 #define PAGESIZE 4096
 #define VIRTMEMSIZE 4294967296
 #define NUMOFFRAMES 64
 using namespace std;
-
 class VirtualMemory {
     friend class PageTable;
     public:
@@ -26,7 +25,7 @@ class VirtualMemory {
     if (allocated + size >= (VIRTMEMSIZE >> 2)) {
         throw "We are limited to 4294967296 bytes with our 32 bit address size";
     }
-    OurPointer ptr(allocated, this);
+	OurPointer ptr(allocated, this);
     allocated += size;
     return ptr;
     }
