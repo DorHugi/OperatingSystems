@@ -25,7 +25,9 @@ int main(){
         *(mat++) = rand() % 100;
     }
 
-    mat = matBase; for (int i = 0; i < VECSIZE; ++i) {
+    mat = matBase;
+
+    for (int i = 0; i < VECSIZE; ++i) {
         *(vec++) = rand() % 20000;
         *(res++) = 0;
     }
