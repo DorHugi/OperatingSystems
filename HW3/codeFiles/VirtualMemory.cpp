@@ -1,11 +1,15 @@
 #include "VirtualMemory.h"
 
 VirtualMemory::VirtualMemory(){
+	
+    
 
-    if (elementsNum > 0){
-        cerr << "Another instnace of VirtualMemory was tried to be created, even though it's a singletone." << endl;
-        exit(1);
-    }
-    elementsNum++; 
-
+};
+OurPointer VirtualMemory::OurMalloc(size_t size){ //allocates a pointer, we added the code for your convenience
+        if (allocated + size >= (VIRTMEMSIZE >> 2)) {
+            throw "We are limited to 4294967296 bytes with our 32 bit address size";
+        }		
+        OurPointer* ptr=new OurPointer(allocated, this);
+	    allocated += size;
+        return *ptr;
 };

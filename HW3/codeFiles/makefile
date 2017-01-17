@@ -1,6 +1,6 @@
 # Makefile for the bank program
-CC = clang++
-CXXFLAGS = -g -std=c++0x -Wall -pedantic
+CC = g++
+CXXFLAGS = -g -std=c++0x -Wall -w
 CCLINK = $(CC)
 OBJS = PhysMem.o VirtualMemory.o Test.o
 RM = rm -f
