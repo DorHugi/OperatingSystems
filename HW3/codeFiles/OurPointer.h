@@ -14,6 +14,7 @@ class VirtualMemory;
 
 class OurPointer{
     friend class VirtualMemory;
+	
 	public:
 
     OurPointer(int adr, VirtualMemory* vrtlMem){
@@ -23,9 +24,16 @@ class OurPointer{
 	
 	
     ~OurPointer(){}; //Destructor
-    int& operator*(){}; //Overload operator*
-    OurPointer& operator++(){}; //Overload ++operator
-    OurPointer operator++(int){};
+    int& operator*();
+    OurPointer& operator++(){//Overload ++operator
+		OurPointer ptr(_adr+4,_vrtlMem);
+		return ptr;
+	}; 
+    OurPointer operator++(int){
+		OurPointer ret(_adr,_vrtlMem);
+		operator++();
+		return (*this);
+	};
     OurPointer& operator--(){};
     OurPointer operator--(int){};
 	private:

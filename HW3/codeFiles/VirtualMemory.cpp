@@ -22,3 +22,7 @@ OurPointer VirtualMemory::OurMalloc(size_t size){ //allocates a pointer, we adde
 	    allocated += size;
         return *ptr;
 }
+
+int* VirtualMemory::GetPage(unsigned int adr){
+	return pageTable.GetPage(adr); 
+}
