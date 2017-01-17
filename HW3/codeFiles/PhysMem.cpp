@@ -1,16 +1,20 @@
-#include <stdlib.h>
-#include <iostream>
-using namespace std;
-#define PHYSMEMSZ 262144
-class PhysMem {
-    friend class VirtualMemory;
-    public:
-    static PhysMem& Access();
-    private:
-    PhysMem() {}
-    static int* physMem;
-    public:
-    PhysMem(PhysMem const&) = delete;
-    void operator=(PhysMem const&) = delete;
-    int* GetFrame(int frameNumber);
-};
+#include "PhysMem.h"
+
+int* PhysMem::physMem;
+
+PhysMem& PhysMem::Access() {
+
+    static PhysMem single;
+
+    if (physMem == NULL) {
+        physMem = (int*)malloc(PHYSMEMSZ);
+    }
+
+    return single;
+}
+
+int* PhysMem::GetFrame(int frameNumber) {
+    if (frameNumber < 0 || frameNumber >= 64)
+        throw "Invalid Frame Number";
+        return &(physMem[1024 * frameNumber]);
+}
