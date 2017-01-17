@@ -8,6 +8,7 @@
 #define PAGESIZE 4096
 #define VIRTMEMSIZE 4294967296
 #define NUMOFFRAMES 64
+#define MAX_ADR 2,147,483,647
 using namespace std;
 
 class VirtualMemory;
@@ -26,16 +27,35 @@ class OurPointer{
     ~OurPointer(){}; //Destructor
     int& operator*();
     OurPointer& operator++(){//Overload ++operator
-		OurPointer ptr(_adr+4,_vrtlMem);
+		if(_adr>MAX_ADR-1){
+			throw "invalid adrress";
+		}
+		OurPointer ptr(_adr+1,_vrtlMem);
 		return ptr;
 	}; 
     OurPointer operator++(int){
+		if(_adr>MAX_ADR-1){
+			throw "invalid adrress";
+		}
 		OurPointer ret(_adr,_vrtlMem);
 		operator++();
 		return (*this);
 	};
-    OurPointer& operator--(){};
-    OurPointer operator--(int){};
+    OurPointer& operator--(){
+		if(_adr<1){
+			throw "invalid adrress";
+		}
+		OurPointer ptr(_adr-1,_vrtlMem);
+		return ptr;
+	};
+    OurPointer operator--(int){
+		if(_adr<1){
+			throw "invalid adrress";
+		}
+		OurPointer ret(_adr,_vrtlMem);
+		operator++();
+		return (*this);
+	};
 	private:
 
     unsigned int _adr; //the virtual address
