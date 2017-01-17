@@ -23,8 +23,13 @@ class OurPointer{
 	
 	
     ~OurPointer(){}; //Destructor
-    int& operator*(){}; //Overload operator*
-    OurPointer& operator++(){}; //Overload ++operator
+    int& operator*(){//Overload operator*
+		return &(_vrtlMem->getPage(_adr));
+	}; 
+    OurPointer& operator++(){//Overload ++operator
+		OurPointer ptr(_adr+4,_vrtlMem);
+		return ptr;
+	}; 
     OurPointer operator++(int){};
     OurPointer& operator--(){};
     OurPointer operator--(int){};

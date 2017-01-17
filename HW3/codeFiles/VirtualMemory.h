@@ -10,6 +10,7 @@
 class OurPointer;
 class VirtualMemory{
     friend class PageTable;
+    friend class OurPointer;
     
    
     public:
