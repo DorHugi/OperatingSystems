@@ -16,6 +16,7 @@ class PhysMem {
         PhysMem(PhysMem const&) = delete;
         void operator=(PhysMem const&) = delete;
         int* GetFrame(int frameNumber);
+        int* getBaseAddress(){return physMem;};
 
     private:
 

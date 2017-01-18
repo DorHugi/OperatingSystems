@@ -3,6 +3,7 @@
 
 
 #define FRAMES_NUM 64
+#define NOT_EVICTED -1
 
 VirtualMemory::VirtualMemory(){
 
@@ -12,8 +13,10 @@ VirtualMemory::VirtualMemory(){
 
         freeFramesList.push(PhysMem::Access().GetFrame(i));
     }
-    
+    //create log file  
 
+    logFile.open("log.csv"); 
+    logFile << "Page Number,Virtual Address,Physical Address,Page Fault,Swap,Evicted,Allocated Page Table Entries"<< endl;
 }
 
 OurPointer VirtualMemory::OurMalloc(size_t size){ //allocates a pointer, we added the code for your convenience
@@ -34,18 +37,26 @@ OurPointer VirtualMemory::OurMalloc(size_t size){ //allocates a pointer, we adde
 int* VirtualMemory::GetAdr(unsigned int adr){ //Given an address, return a pointer to it (to the actual physical memory it points to). 
 
     //First - get the required page:
+    bool dirEntryAllocated = false;
     bool pageFault = false;     
-    PageTableEntry& curPage = pageTable.getPage(adr);
+    bool swap = false;
+    PageTableEntry& curPage = pageTable.getPage(adr,dirEntryAllocated);
     unsigned int pageNumber = adr >> 12;
-    if (! curPage.get_page_address()){ //Page has never been assigned before.
-        
+    int* frameBaseAdr = PhysMem::Access().getBaseAddress();
+    long int evictedPage = NOT_EVICTED;
+    long int normPhysAdr;
+
+
+    if (! curPage.get_page_address()){ //Page has never been assigned before.PAGE FAULT!
+        pageFault = true; 
         //Page is not valid - give it some memory!!
-        curPage.set_page_address(GetFreeFrame());
+        curPage.set_page_address(GetFreeFrame(evictedPage));
         pageQueue.push(pageNumber); //update queue - page was allocated with a frame.
     } 
     else if (!curPage.is_valid()){ //PAGE FAULT!. Page was used before, but is not valid - neeeds to be swapped in.
         pageFault = true;
-        int* freeFrame = GetFreeFrame();
+        swap = true;
+        int* freeFrame = GetFreeFrame(evictedPage);
         swapDevice.ReadFrameFromSwapDevice(pageNumber,freeFrame);
         curPage.set_page_address(freeFrame);
         pageQueue.push(pageNumber); //page was allocated with a frame.
@@ -60,23 +71,35 @@ int* VirtualMemory::GetAdr(unsigned int adr){ //Given an address, return a point
 
 
     int curOffset = getOffset(adr)/4;  //offset is divided by 4 becase increment of int* is by 4 anyway
-    return curPageAddress+curOffset ;
+
+    int* physAdr = curPageAddress+curOffset;
+
+    //Before returning - write all the detailes to log file.
+
+    normPhysAdr = (physAdr - frameBaseAdr)*4;
+    
+    logFile << pageNumber << "," << adr << "," << normPhysAdr << "," << pageFault << "," << swap << "," << evictedPage << "," << dirEntryAllocated <<  endl;
+
+
+    //return physical address.
+    return physAdr ;
 }
 
 
 
-int* VirtualMemory::GetFreeFrame(){ //Remove one item from the freeFrameList and return it – suggestion, use memset(framePtr, 0, PAGESIZE) before return, might help debugging!
+int* VirtualMemory::GetFreeFrame(long int& evictedPage){ //Remove one item from the freeFrameList and return it – suggestion, use memset(framePtr, 0, PAGESIZE) before return, might help debugging!
 
     int* curAvailFrame = NULL;
     //Make sure there's a free frame.
-    
+    bool dirEntryAllocated;  //we don't care of this variables value.
     if (freeFramesList.empty()){ //A page needs to be swapped out.
-
         int pageToRemove = pageQueue.front();
         pageQueue.pop();
 
+        evictedPage = pageToRemove;
+
         unsigned int pageAddress = pageToRemove  << 12 ; //page number to page address
-        PageTableEntry& pageToRemoveRef = pageTable.getPage(pageAddress);
+        PageTableEntry& pageToRemoveRef = pageTable.getPage(pageAddress,dirEntryAllocated);
         swapDevice.WriteFrameToSwapDevice(pageToRemove,pageToRemoveRef.get_page_address());
         pageToRemoveRef.set_valid(false);
         freeFramesList.push(pageToRemoveRef.get_page_address());

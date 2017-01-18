@@ -45,7 +45,7 @@ PageTable::PageTable(){ //c'tor
 
 
 
-PageTableEntry& PageTable::getPage(unsigned int adr){
+PageTableEntry& PageTable::getPage(unsigned int adr, bool& dirEntryAllocated){
 
 
 
@@ -53,6 +53,7 @@ PageTableEntry& PageTable::getPage(unsigned int adr){
 
     if (!directoryEntries[curDir]){
         directoryEntries[curDir] = new PageDirectoryEntry;
+        dirEntryAllocated = true;
     }
 
     return directoryEntries[curDir]->getPage(adr);

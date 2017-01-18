@@ -14,7 +14,7 @@ class PageTable
     public:
   
     PageTable();
-    PageTableEntry& getPage(unsigned int adr);
+    PageTableEntry& getPage(unsigned int adr, bool& dirEntryAllocated);
     
 
 
