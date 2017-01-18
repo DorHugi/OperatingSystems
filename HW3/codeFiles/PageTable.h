@@ -2,7 +2,7 @@
 #define _PAGE_TABLE
 
 #include "PageDirectoryEntry.h"
-
+#include "AddressManipulation.h"
 
 
 //CONSTS:

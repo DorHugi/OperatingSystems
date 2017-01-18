@@ -25,7 +25,9 @@ class OurPointer{
 	
 	
     ~OurPointer(){}; //Destructor
+
     int& operator*();
+
     OurPointer& operator++(){//Overload ++operator
 		if(_adr>MAX_ADR-1){
 			throw "invalid adrress";
@@ -33,6 +35,7 @@ class OurPointer{
 		OurPointer ptr(_adr+1,_vrtlMem);
 		return ptr;
 	}; 
+
     OurPointer operator++(int){
 		if(_adr>MAX_ADR-1){
 			throw "invalid adrress";
@@ -41,6 +44,7 @@ class OurPointer{
 		operator++();
 		return (*this);
 	};
+
     OurPointer& operator--(){
 		if(_adr<1){
 			throw "invalid adrress";
@@ -48,6 +52,7 @@ class OurPointer{
 		OurPointer ptr(_adr-1,_vrtlMem);
 		return ptr;
 	};
+
     OurPointer operator--(int){
 		if(_adr<1){
 			throw "invalid adrress";
@@ -56,6 +61,7 @@ class OurPointer{
 		operator++();
 		return (*this);
 	};
+
 	private:
 
     unsigned int _adr; //the virtual address
