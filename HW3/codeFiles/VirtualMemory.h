@@ -19,7 +19,7 @@ class VirtualMemory{
     int* GetFreeFrame(); //Remove one item from the freeFrameList and return it – suggestion, use memset(framePtr, 0, PAGESIZE) before return, might help debugging!
     void ReleaseFrame(int* framePointer); //releases the frame pointed by the framePointer, make sure you only use this function with a pointer to the beginning of the Frame! it should be the same pointer as held in the PTE.
     OurPointer OurMalloc(size_t size);
-    int* GetPage(unsigned int adr) { return pageTable.GetPage(adr); }
+    int* GetPage(unsigned int adr);
 
 
     
