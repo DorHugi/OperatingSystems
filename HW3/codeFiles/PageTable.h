@@ -14,11 +14,12 @@ class PageTable
 	
     public:
   
-    //Your Constructor (and Destructor if you need one) should go here
-    int* GetPage (unsigned int adr){};
-		PageTable(){};
-		~PageTable(){};
+    PageTable(){};
+    ~PageTable(){};
 
+    int* GetPage (unsigned int adr);
+    int* GetAddress(unsigned int adr); 
+   
 
     private:
     //Fill the class with the necessary member variables

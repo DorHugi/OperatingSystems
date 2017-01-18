@@ -28,7 +28,7 @@ OurPointer& OurPointer::operator--(){
 		return *this;
 };
 OurPointer OurPointer::operator--(int){
-		if(_adr<1){
+	:	if(_adr<1){
 			throw "invalid adrress";
 		}
 		OurPointer ret(_adr,_vrtlMem);

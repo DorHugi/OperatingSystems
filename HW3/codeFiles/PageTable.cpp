@@ -31,6 +31,18 @@ int* PageTable::GetPage (unsigned int adr){
 }
 
 
+int* PageTable::GetAddress(unsigned int adr){
+    
+    int offset = getOffset(adr);     
+    int* page = this->GetPage(adr);
+    offset = offset / 4;
+
+
+    return page+offset;
+}
+
+
+
 
 
 
