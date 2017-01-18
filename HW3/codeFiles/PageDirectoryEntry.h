@@ -10,10 +10,20 @@
 class PageDirectoryEntry{
     public:
         
+        
+     
+
         //Methods:
-        int* getPage(unsigned int adr);
+
+        //int* GetPage(unsigned int adr);
+        PageTableEntry& getPage(unsigned int adr); 
+
+        
+
 
         //Variables: 
+        //TODO: Make sure that this works, if not - it needs to be dynamically allocated (with c'tor, d'tor, and new operator).
+
         PageTableEntry tableEntries[TABLE_ENTRIES];
 };
 #endif

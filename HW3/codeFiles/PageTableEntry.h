@@ -1,6 +1,9 @@
 #ifndef _PAGE_TABLE_ENTRY
 #define _PAGE_TABLE_ENTRY
 
+#define PAGE_SIZE 4096
+#define NULL 0
+
 class PageTableEntry
 {
     public:

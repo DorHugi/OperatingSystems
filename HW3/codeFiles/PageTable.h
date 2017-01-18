@@ -15,11 +15,17 @@ class PageTable
     public:
   
     PageTable(){};
-    ~PageTable(){};
+    PageTableEntry& getPage(unsigned int adr);
+    
 
-    int* GetPage (unsigned int adr);
-    int* GetAddress(unsigned int adr); 
-   
+
+    //~PageTable(){};
+
+    //int* GetPage (unsigned int adr);
+    //int* GetAddress(unsigned int adr); 
+
+
+
 
     private:
     //Fill the class with the necessary member variables

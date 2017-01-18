@@ -16,30 +16,49 @@ PageTable::PageTable(){ //c'tor
 
 
 
-int* PageTable::GetPage (unsigned int adr){
+//int* PageTable::GetPage (unsigned int adr){
 
-    //int original  = 0b00000001100000010100000000110100;  //For testing purposes.
+    ////int original  = 0b00000001100000010100000000110100;  //For testing purposes.
 
-    unsigned int dir = getDir(adr);
+    //unsigned int dir = getDir(adr);
+    //if (!directoryEntries[dir]){
+        //directoryEntries[dir] = new PageDirectoryEntry;
+    //}
+
+    
+
+    //return directoryEntries[dir].getPage(adr);
+
+
+//}
+
+
+//int* PageTable::GetAddress(unsigned int adr){
+    
+    //int offset = getOffset(adr);     
+    //int* page = this->GetPage(adr);
+    //offset = offset / 4;
+
+
+    //return page+offset;
+//}
+
+
+
+PageTableEntry& PageTable::getPage(unsigned int adr){
+
+
+
+    unsigned int curDir = getDir(adr);
+
     if (!directoryEntries[dir]){
         directoryEntries[dir] = new PageDirectoryEntry;
     }
 
     return directoryEntries[dir].getPage(adr);
-
-
+     
 }
 
-
-int* PageTable::GetAddress(unsigned int adr){
-    
-    int offset = getOffset(adr);     
-    int* page = this->GetPage(adr);
-    offset = offset / 4;
-
-
-    return page+offset;
-}
 
 
 
