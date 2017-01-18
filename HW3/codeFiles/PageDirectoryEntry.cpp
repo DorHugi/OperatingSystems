@@ -22,7 +22,7 @@
 
 
 
-PageTableEntry& getPage(unsigned int adr){
+PageTableEntry& PageDirectoryEntry::getPage(unsigned int adr){
 
     int curPage = getTable(adr);  
     

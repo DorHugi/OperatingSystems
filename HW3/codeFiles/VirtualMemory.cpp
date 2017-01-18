@@ -67,3 +67,19 @@ int* VirtualMemory::GetFreeFrame(){ //Remove one item from the freeFrameList and
 
 
 }
+
+
+
+int& OurPointer::operator*(){
+
+		//*(_vrtlMem->GetPage(_adr));
+        
+        //get address from virtual memory:
+        int* physicalAddress = _vrtlMem->GetAdr(_adr); 
+        return *(physicalAddress);
+}
+
+
+
+
+

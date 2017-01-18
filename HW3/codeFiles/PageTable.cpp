@@ -51,11 +51,11 @@ PageTableEntry& PageTable::getPage(unsigned int adr){
 
     unsigned int curDir = getDir(adr);
 
-    if (!directoryEntries[dir]){
-        directoryEntries[dir] = new PageDirectoryEntry;
+    if (!directoryEntries[curDir]){
+        directoryEntries[curDir] = new PageDirectoryEntry;
     }
 
-    return directoryEntries[dir].getPage(adr);
+    return directoryEntries[curDir]->getPage(adr);
      
 }
 

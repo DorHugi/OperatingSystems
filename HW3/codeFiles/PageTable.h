@@ -2,7 +2,6 @@
 #define _PAGE_TABLE
 
 #include "PageDirectoryEntry.h"
-#include "AddressManipulation.h"
 
 
 //CONSTS:
@@ -14,7 +13,7 @@ class PageTable
 	
     public:
   
-    PageTable(){};
+    PageTable();
     PageTableEntry& getPage(unsigned int adr);
     
 

@@ -1,0 +1,1 @@
+g++ -g -Wall -w -std=c++0x -o amen AddressManipulation.cpp OurPointer.cpp PageDirectoryEntry.cpp PageTable.cpp PhysMem.cpp Test.cpp VirtualMemory.cpp AddressManipulation.h OurPointer.h PageDirectoryEntry.h PageTableEntry.h PageTable.h PhysMem.h VirtualMemory.h

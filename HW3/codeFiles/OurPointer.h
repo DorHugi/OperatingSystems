@@ -1,7 +1,7 @@
 #ifndef OUR_POINTER
 #define OUR_POINTER
 
-#include "VirtualMemory.h"
+//#include "VirtualMemory.h"
 #include "PageTable.h"
 
 
@@ -14,6 +14,8 @@ using namespace std;
 
 class VirtualMemory;
 
+
+
 class OurPointer{
     friend class VirtualMemory;
 	
@@ -22,7 +24,7 @@ class OurPointer{
     OurPointer(int adr, VirtualMemory* vrtlMem):_adr(adr),_vrtlMem(vrtlMem){}; //Constructor
 	
 	
-    ~OurPointer(){}; //Destructor
+    //~OurPointer(){}; //Destructor
 
     int& operator*();
     OurPointer& operator++(); 

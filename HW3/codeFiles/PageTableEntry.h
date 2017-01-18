@@ -4,6 +4,8 @@
 #define PAGE_SIZE 4096
 #define NULL 0
 
+#include "AddressManipulation.h"
+
 class PageTableEntry
 {
     public:

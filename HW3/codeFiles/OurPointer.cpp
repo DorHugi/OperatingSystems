@@ -1,13 +1,14 @@
 #include "OurPointer.h"
 
-int& OurPointer::operator*(){
 
-		//*(_vrtlMem->GetPage(_adr));
+//int& OurPointer::operator*(){
+
+		///[>(_vrtlMem->GetPage(_adr));
         
-        //get address from virtual memory:
-        int* physicalAddress = _vrtlMem->GetAdr(_adr); 
-        return *(physicalAddress);
-}
+        ////get address from virtual memory:
+        //int* physicalAddress = _vrtlMem->GetAdr(_adr); 
+        //return *(physicalAddress);
+//}
 
 OurPointer& OurPointer::operator++(){//Overload ++operator
 		if(_adr>MAX_ADR-4){
