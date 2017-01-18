@@ -41,7 +41,7 @@ int* VirtualMemory::GetAdr(unsigned int adr){ //Given an address, return a point
     //Page is not valid - give it some memory!!
 
     curPage.set_page_address(GetFreeFrame());
-
+    curPage.set_valid(true); //Now when we've allocated memory, the page is certainly valid.
     } 
     
     //Now - we know that the page is valid, and that its address is updated.
@@ -57,6 +57,9 @@ int* VirtualMemory::GetAdr(unsigned int adr){ //Given an address, return a point
 
 int* VirtualMemory::GetFreeFrame(){ //Remove one item from the freeFrameList and return it – suggestion, use memset(framePtr, 0, PAGESIZE) before return, might help debugging!
 
+    //static int count = 0;
+    //cout << count << endl;
+    //count++;
     int* curAvailFrame = freeFramesList.front(); //get first element
     freeFramesList.pop(); //remove it from the queue
     

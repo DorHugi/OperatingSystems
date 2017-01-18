@@ -14,7 +14,7 @@ OurPointer& OurPointer::operator++(){//Overload ++operator
 		if(_adr>MAX_ADR-4){
 			throw "invalid adrress";
 		}
-		_adr=_adr+1;
+		_adr=_adr+4; //Inc by 4, since address is unsigned int.
 		return *this;
 };
 
@@ -30,7 +30,7 @@ OurPointer& OurPointer::operator--(){ //--operator
 		if(_adr<4){
 			throw "invalid adrress";
 		}
-		_adr=_adr-1;
+		_adr=_adr-4;
 		return *this;
 };
 OurPointer OurPointer::operator--(int){ //operator--
