@@ -1,3 +1,6 @@
+#ifndef _PAGE_DIRECTORY_ENTRY
+#define _PAGE_DIRECTORY_ENTRY
+#include "PageTableEntry.h"
 #include "AddressManipulation.h"
 
 //CONSTS:
@@ -5,9 +8,6 @@
 
 
 class PageDirectoryEntry{
-
-
-
     public:
         
         //Methods:
@@ -16,3 +16,4 @@ class PageDirectoryEntry{
         //Variables: 
         PageTableEntry tableEntries[TABLE_ENTRIES];
 };
+#endif
