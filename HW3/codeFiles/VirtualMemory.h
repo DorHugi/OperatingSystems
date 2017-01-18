@@ -9,6 +9,8 @@
 #include "PhysMem.h"
 #include <unordered_set>
 #include "PageTable.h"
+#include "SwapDevice.h"
+
 
 class OurPointer;
 using namespace std;
@@ -30,7 +32,10 @@ class VirtualMemory{
     private:
 	size_t allocated; //The number of ints already allocated, ((allocated * 4) = (number of bytes already allocated)), this can also be used as the next address to be allocated.
     queue<int*> freeFramesList;
+    queue<unsigned int> pageQueue;
     PageTable pageTable;
+    SwapDevice swapDevice;
+
 };
 
 #endif
