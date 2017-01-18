@@ -2,8 +2,8 @@
 #define _PAGE_TABLE_ENTRY
 
 #define PAGE_SIZE 4096
-#define NULL 0
-
+//#define NULL 0
+#include <cstring> //For NULL definition
 #include "AddressManipulation.h"
 
 class PageTableEntry

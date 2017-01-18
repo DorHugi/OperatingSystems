@@ -8,7 +8,7 @@
 //#define PAGESIZE 4096 //Remove - it's defined at the page class (PageTableEntry);
 #define VIRTMEMSIZE 4294967296
 #define NUMOFFRAMES 64
-#define MAX_ADR 2,147,483,647
+#define MAX_ADR 2147483647
 
 using namespace std;
 
