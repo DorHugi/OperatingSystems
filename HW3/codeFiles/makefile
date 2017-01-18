@@ -1,18 +1,21 @@
-# Makefile for the bank program
+# Makefile for the Bank program
 CC = g++
-CXXFLAGS = -g -std=c++0x -Wall -w
+CXXFLAGS = -g -std=c++0x -Wall
 CCLINK = $(CC)
-OBJS = PhysMem.o VirtualMemory.o Test.o OurPointer.o
+OBJS = main.o VirtualMemory.o OurPointer.o PageTable.o PhysMem.o PageDirectoryEntry.o AddressManipulation.o
 RM = rm -f
 # Creating the  executable
-all: $(OBJS)
-	$(CCLINK) -o test $(OBJS)
+App: $(OBJS)
+	$(CCLINK) $(CFLAGS) -o App $(OBJS) 
 # Creating the object files
-Test.o: Test.cpp
-VirtualMemory.o: VirtualMemory.cpp VirtualMemory.h  
+main.o: main.cpp VirtualMemory.h OurPointer.h
+VirtualMemory.o: VirtualMemory.h VirtualMemory.cpp OurPointer.h PhysMem.h PageTable.h
+OurPointer.o: OurPointer.h OurPointer.cpp PageTable.h
+PageTable.o: PageTable.h PageTable.cpp VirtualMemory.h
 PhysMem.o: PhysMem.cpp PhysMem.h 
-OurPointer.o: OurPointer.cpp OurPointer.h 
-PageTable.o: PageTable.cpp PageTable.h PageDirectoryEntry.cpp PageDirectoryEntry.h PageTableEntry.h AddressManipulation.h AddressManipulation.cpp
+PageDirectoryEntry.o: PageDirectoryEntry.cpp PageDirectoryEntry.h PageTableEntry.h
+AddressManipulation.o: AddressManipulation.cpp AddressManipulation.h
 # Cleaning old files before new make
 clean:
 	$(RM) $(TARGET) *.o *~ "#"* core.*
+
