@@ -49,13 +49,20 @@ int* VirtualMemory::GetAdr(unsigned int adr){ //Given an address, return a point
 
     if (! curPage.get_page_address()){ //Page has never been assigned before.PAGE FAULT!
         pageFault = true; 
+        
+        if (freeFramesList.empty())
+            swap = true; 
+        
         //Page is not valid - give it some memory!!
         curPage.set_page_address(GetFreeFrame(evictedPage));
         pageQueue.push(pageNumber); //update queue - page was allocated with a frame.
     } 
     else if (!curPage.is_valid()){ //PAGE FAULT!. Page was used before, but is not valid - neeeds to be swapped in.
         pageFault = true;
-        swap = true;
+
+        if (freeFramesList.empty())
+            swap = true; 
+
         int* freeFrame = GetFreeFrame(evictedPage);
         swapDevice.ReadFrameFromSwapDevice(pageNumber,freeFrame);
         curPage.set_page_address(freeFrame);
@@ -92,6 +99,7 @@ int* VirtualMemory::GetFreeFrame(long int& evictedPage){ //Remove one item from 
     int* curAvailFrame = NULL;
     //Make sure there's a free frame.
     bool dirEntryAllocated;  //we don't care of this variables value.
+
     if (freeFramesList.empty()){ //A page needs to be swapped out.
         int pageToRemove = pageQueue.front();
         pageQueue.pop();
