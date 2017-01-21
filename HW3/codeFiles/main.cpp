@@ -39,7 +39,8 @@ int main(){
         for (int col = 0; col < VECSIZE; ++col) {
             //*res += (*(mat++)) * (*(vec++)); //it works, but accesses to operator* might happen in an unspecified order
             int mat_value = *(mat++); //our fix for log
-            *res += (mat_value) * (*(vec++)); //log file consistency
+            int vec_value = *(vec++);
+            *res += (mat_value) * (vec_value); //log file consistency
         }
 
         vec = vecBase;
